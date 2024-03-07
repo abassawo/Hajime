@@ -8,11 +8,11 @@ import androidx.compose.runtime.remember
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.ChannelsViewState
 import presentation.VimeoBaseModel
-import presentation.channels.ChannelsListScreen
+import presentation.channels.VideoListScreen
 
 @Composable
 @Preview
-fun App() {
+fun StaffPick() {
     val baseViewModel = remember { VimeoBaseModel() }
     val viewState = baseViewModel.mutableStateFlow.collectAsState()
 
@@ -23,7 +23,7 @@ fun App() {
         }
         val channelViewState = viewState.value
         when(channelViewState) {
-            is ChannelsViewState.Content -> ChannelsListScreen(channelViewState.videoCollection)
+            is ChannelsViewState.Content -> VideoListScreen(channelViewState.videoCollection)
             is ChannelsViewState.Error -> Text("Error occurred")
             ChannelsViewState.Loading -> CircularProgressIndicator()
         }

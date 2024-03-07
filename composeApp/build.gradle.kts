@@ -46,7 +46,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha03")
+            implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha03")
             implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
             implementation("io.ktor:ktor-client-core:$ktorVersion")
