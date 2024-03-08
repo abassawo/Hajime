@@ -4,15 +4,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import presentation.SearchViewModel
 import presentation.VideoSetViewState
-import presentation.StaffPickViewModelImpl
 import presentation.videos.VideoListScreen
 
 @Composable
-@Preview
+
 fun ChannelResults(channel: String) {
-    val viewState = remember { StaffPickViewModelImpl(channel) }.mutableStateFlow.collectAsState()
+    val viewState = remember { SearchViewModel() }.mutableStateFlow.collectAsState()
 
     MaterialTheme {
         val channelViewState = viewState.value

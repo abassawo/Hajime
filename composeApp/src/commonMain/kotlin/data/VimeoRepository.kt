@@ -15,29 +15,29 @@ import kotlinx.serialization.json.Json
 
 
 class VimeoRepository : VimeoService {
-    
-        @OptIn(ExperimentalSerializationApi::class)
-        private val client: HttpClient =
-            HttpClient {
-                install(Auth) {
-                    bearer {
-                        sendWithoutRequest {
-                            it.headers { append("Authorization", token ) }
-                            true
-                        }
-                        BearerTokens("Authorization", token)
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private val client: HttpClient =
+        HttpClient {
+            install(Auth) {
+                bearer {
+                    sendWithoutRequest {
+                        it.headers { append("Authorization", token) }
+                        true
                     }
-                }
-                install(ContentNegotiation) {
-                    json(Json {
-                        explicitNulls = false
-                        ignoreUnknownKeys = true
-                        coerceInputValues = true
-                        prettyPrint = true
-                        isLenient = true
-                    })
+                    BearerTokens("Authorization", token)
                 }
             }
+            install(ContentNegotiation) {
+                json(Json {
+                    explicitNulls = false
+                    ignoreUnknownKeys = true
+                    coerceInputValues = true
+                    prettyPrint = true
+                    isLenient = true
+                })
+            }
+        }
 
 
     override suspend fun getChannels(): ChannelsResponse {
@@ -53,6 +53,15 @@ class VimeoRepository : VimeoService {
         val url = "https://api.vimeo.com/channels/$channel/videos"
         val query = URLBuilder(url).buildString()
         return client.get(query).body()
+    }
+
+    override suspend fun searchVideos(query: String): VideoCollection {
+        val url = "https://api.vimeo.com/videos/"
+        val searchQuery = URLBuilder(url).apply {
+            parameters.append("query", query)
+        }.buildString()
+        return client.get(searchQuery).body()
+
     }
 
 

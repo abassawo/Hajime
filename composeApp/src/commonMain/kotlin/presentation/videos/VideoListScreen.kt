@@ -42,8 +42,8 @@ fun VideoCard(video: Video) {
         AsyncImage(model = video.pictures.baseLink, "", Modifier.size(100.dp))
 
         Column(Modifier.padding(16.dp)) {
-            Text(text = video.name)
-            Text(text = video.description, maxLines = 3)
+            Text(text = video.name ?: "")
+            Text(text = video.description ?: "", maxLines = 3)
         }
 
     }
