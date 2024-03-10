@@ -10,17 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import data.Video
 import data.VideoCollection
-import presentation.ChannelViewEntity
 
 @Composable
 fun VideoListScreen(videoCollection: VideoCollection) {
@@ -29,7 +28,7 @@ fun VideoListScreen(videoCollection: VideoCollection) {
         }
         LazyColumn(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
             items(videoCollection.data) {
-                VideoCard(it)
+                VideoCardTextNextToPreview(it)
                 Divider(Modifier.background(Color.Black))
             }
         }
@@ -37,8 +36,21 @@ fun VideoListScreen(videoCollection: VideoCollection) {
 }
 
 @Composable
-fun VideoCard(video: Video) {
+fun VideoCardTextNextToPreview(video: Video) {
     Row {
+        AsyncImage(model = video.pictures.baseLink, "", Modifier.size(100.dp))
+
+        Column(Modifier.padding(16.dp)) {
+            Text(text = video.name ?: "")
+            Text(text = video.description ?: "", maxLines = 3)
+        }
+
+    }
+}
+
+@Composable
+fun VideoCardTextBelowPreview(video: Video) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         AsyncImage(model = video.pictures.baseLink, "", Modifier.size(100.dp))
 
         Column(Modifier.padding(16.dp)) {
