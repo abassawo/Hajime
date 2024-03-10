@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import presentation.SearchViewModel
 import presentation.VideoSetViewState
-import presentation.videos.VideoListScreen
 
 @Composable
 
@@ -16,7 +15,7 @@ fun ChannelResults(channel: String) {
     MaterialTheme {
         val channelViewState = viewState.value
         when(channelViewState) {
-            is VideoSetViewState.Content -> VideoListScreen(channelViewState.videoCollection)
+            is VideoSetViewState.Content -> Text("Content WIP") // VideoPlayerScreen(channelViewState.videos)
             is VideoSetViewState.Error -> Text("Error occurred")
             VideoSetViewState.Loading -> CircularProgressIndicator()
         }

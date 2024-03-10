@@ -1,6 +1,6 @@
 package presentation
 
-import data.VideoCollection
+import data.Video
 import data.VimeoRepository
 import data.VimeoService
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 sealed class VideoSetViewState {
     object Loading : VideoSetViewState()
-    data class Content(val videoCollection: VideoCollection) : VideoSetViewState()
+    data class Content(val videos: List<Video>) : VideoSetViewState()
     data class Error(val message: String) : VideoSetViewState()
 }
 
@@ -26,10 +26,23 @@ class SearchViewModel(
     val coroutineScope: CoroutineScope = CoroutineScope(
         Dispatchers.IO + SupervisorJob()
     )
+    val allVideos: MutableList<Video> = mutableListOf()
+    var iterator = tags.iterator()
 
     init {
-        tags.firstOrNull()?.let {
-            fetchVideos(it)
+        refresh()
+    }
+
+    fun refresh() {
+        if (iterator.hasNext()) {
+            val nextTag = iterator.next()
+            coroutineScope.launch {
+                val videos = getVideos(nextTag)
+                allVideos.addAll(videos)
+                mutableStateFlow.value = VideoSetViewState.Content(allVideos)
+            }
+        } else {
+            iterator = tags.iterator()
         }
     }
 
@@ -38,7 +51,7 @@ class SearchViewModel(
         coroutineScope.launch {
             runCatching { vimeoService.getVideos(channelName) }
                 .mapCatching { it }
-                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it) }
+                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it.data) }
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
                 }
@@ -49,10 +62,19 @@ class SearchViewModel(
         mutableStateFlow.value = VideoSetViewState.Loading
         coroutineScope.launch {
             runCatching { vimeoService.searchVideos(tag) }
-                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it) }
+                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it.data) }
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
                 }
+        }
+    }
+
+    suspend fun getVideos(vararg tags: String): List<Video> {
+        return buildList<Video> {
+            tags.forEach {
+                val result = vimeoService.searchVideos(it).data
+                addAll(result)
+            }
         }
     }
 }

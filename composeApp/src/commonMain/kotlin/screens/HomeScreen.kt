@@ -21,18 +21,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import data.VideoCollection
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.SearchViewModel
 import presentation.VideoSetViewState
 import presentation.videos.VideoCardTextBelowPreview
+import presentation.videos.VideoPlayerScreen
 
 data class TopBarAction(val clickAction: () -> Unit)
 
 @Composable
-fun MainTopBar(action: () -> Unit)  {
-    TopAppBar(title = { Text("Hajime")})
+fun MainTopBar(action: () -> Unit) {
+    TopAppBar(title = { Text("Hajime") })
 }
 
 @Preview
@@ -40,7 +39,7 @@ fun MainTopBar(action: () -> Unit)  {
 fun App() {
     val destinations = Destination.entries
     val selectedDestination = remember { mutableStateOf(destinations.first()) }
-    Scaffold(Modifier.fillMaxSize(), topBar = { MainTopBar {  } }, bottomBar = {
+    Scaffold(Modifier.fillMaxSize(), topBar = { MainTopBar { } }, bottomBar = {
         BottomAppBar {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -59,48 +58,37 @@ fun App() {
                 Destination.Account -> Text("Account")
             }
         }
-
-
     }
 }
 
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeScreen() {
     Column(Modifier.fillMaxSize()) {
-//        Image(
-//            painterResource(DrawableResource("compose-multiplatform")),
-//            null,
-//            modifier = Modifier.size(50.dp)
-//        )
-        ContinueLearningPage()
-    }
-}
+        val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
+        val showVideoPlayer = remember { mutableStateOf(false) }
+        val viewModel = remember { SearchViewModel(tags) }
 
-@Composable
-fun ContinueLearningPage() {
-    val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
+        Column(Modifier.fillMaxSize()) {
+            when (val result = viewModel.mutableStateFlow.collectAsState().value) {
+                is VideoSetViewState.Content -> if (showVideoPlayer.value) {
+                    VideoPlayerScreen(result.videos.first(), result.videos)
+                } else {
+                        Text(text = "Continue Learning", Modifier.padding(16.dp))
+                        LazyVerticalGrid(
+                            GridCells.Fixed(2),
+                            Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                        ) {
+                            items(result.videos) {
+                                VideoCardTextBelowPreview(it) {
+                                    showVideoPlayer.value = true
+                                }
+                            }
+                    }
+                }
 
-    val viewModel = remember { SearchViewModel(tags) }
-
-    Column(Modifier.fillMaxSize()) {
-        when (val result = viewModel.mutableStateFlow.collectAsState().value) {
-            is VideoSetViewState.Content -> VideoResults(result.videoCollection)
-            is VideoSetViewState.Error -> Unit
-            VideoSetViewState.Loading -> Unit
-        }
-    }
-}
-
-@Composable
-fun VideoResults(videoCollection: VideoCollection) {
-    Column {
-        Text(text = "Continue Learning", Modifier.padding(16.dp))
-
-        LazyVerticalGrid(GridCells.Fixed(2), Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-            items(videoCollection.data) {
-                VideoCardTextBelowPreview(it)
+                is VideoSetViewState.Error -> Unit
+                VideoSetViewState.Loading -> Unit
             }
         }
     }

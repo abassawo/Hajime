@@ -1,9 +1,11 @@
 package presentation.videos
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,15 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import data.Video
-import data.VideoCollection
 
 @Composable
-fun VideoListScreen(videoCollection: VideoCollection) {
-    Column {
+fun VideoPlayerScreen(selectedVideo: Video, videoCollection: List<Video>) {
+    Column(Modifier.fillMaxSize()) {
         Box(Modifier.background(Color.Black).fillMaxWidth().height(300.dp)) {
+            // todo - play video
         }
         LazyColumn(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-            items(videoCollection.data) {
+            items(videoCollection) {
                 VideoCardTextNextToPreview(it)
                 Divider(Modifier.background(Color.Black))
             }
@@ -49,11 +51,15 @@ fun VideoCardTextNextToPreview(video: Video) {
 }
 
 @Composable
-fun VideoCardTextBelowPreview(video: Video) {
+fun VideoCardTextBelowPreview(video: Video, clickAction: (video: Video) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        AsyncImage(model = video.pictures.baseLink, "", Modifier.size(100.dp))
+        AsyncImage(
+            model = video.pictures.baseLink,
+            "",
+            Modifier.clickable { clickAction(video) }.size(100.dp)
+        )
 
-        Column(Modifier.padding(16.dp)) {
+        Column(Modifier.padding(16.dp).clickable { clickAction(video) }) {
             Text(text = video.name ?: "")
             Text(text = video.description ?: "", maxLines = 3)
         }
