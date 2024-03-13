@@ -70,11 +70,12 @@ class SearchViewModel(
     }
 
     suspend fun getVideos(vararg tags: String): List<Video> {
-        return buildList<Video> {
-            tags.forEach {
-                val result = vimeoService.searchVideos(it).data
-                addAll(result)
-            }
-        }
+        return emptyList()
+//        return buildList<Video> {
+//            tags.forEach {
+//                val result = vimeoService.searchVideos(it).data
+//                addAll(result)
+//            }
+//        }
     }
 }

@@ -34,6 +34,8 @@ kotlin {
         val ktorVersion = "2.2.4"
         val coroutinesVersion = "1.6.2"
 
+
+
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
@@ -72,8 +74,9 @@ android {
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    sourceSets["main"].res.srcDirs("src/androidMain/res")
-    sourceSets["main"].resources.srcDirs("src/commonMain/resources")
+    sourceSets["main"].res.srcDirs(listOf(
+        "src/androidMain/res",
+        "src/commonMain/res"))
 
     defaultConfig {
         applicationId = "com.lindenlabs.hajime"

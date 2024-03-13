@@ -66,27 +66,31 @@ fun App() {
 fun HomeScreen() {
     Column(Modifier.fillMaxSize()) {
         val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
-        val showVideoPlayer = remember { mutableStateOf(false) }
+        //        val showVideoPlayer = remember { mutableStateOf(false) }
         val viewModel = remember { SearchViewModel(tags) }
 
         Column(Modifier.fillMaxSize()) {
             when (val result = viewModel.mutableStateFlow.collectAsState().value) {
-                is VideoSetViewState.Content -> if (showVideoPlayer.value) {
-                    VideoPlayerScreen(result.videos.first(), result.videos)
-                } else {
-                        Text(text = "Continue Learning", Modifier.padding(16.dp))
-                        LazyVerticalGrid(
-                            GridCells.Fixed(2),
-                            Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                        ) {
-                            items(result.videos) {
-                                VideoCardTextBelowPreview(it) {
-                                    showVideoPlayer.value = true
-                                }
-                            }
+                is VideoSetViewState.Content -> {
+                    //                    if (showVideoPlayer.value) {
+                    //                    VideoPlayerScreen(result.videos.first(), result.videos)
+                    //                } else {
+                    Text(text = "Continue Learning", Modifier.padding(16.dp))
+                    LazyVerticalGrid(
+                        GridCells.Fixed(2),
+                        Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                    ) {
+                                                items(result.videos) {
+                                                    VideoCardTextBelowPreview(it) {
+//                                                        showVideoPlayer.value = true
+                                                    }
+                                                }
+                                        }
                     }
-                }
 
+
+                //                is VideoSetViewState.Error -> Unit
+                //                VideoSetViewState.Loading -> Unit
                 is VideoSetViewState.Error -> Unit
                 VideoSetViewState.Loading -> Unit
             }
