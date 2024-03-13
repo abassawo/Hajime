@@ -26,6 +26,7 @@ class LocalDataStore constructor(val resourceReader: ResourceReader) : VimeoServ
 
     override suspend fun searchVideos(query: String): VideoCollection {
         val stringResponse = resourceReader.loadJsonFile().toString()
+        println("Json response $stringResponse")
         return json.decodeFromString(stringResponse)
     }
 }

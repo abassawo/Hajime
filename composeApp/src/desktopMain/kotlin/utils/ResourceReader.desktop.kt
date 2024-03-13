@@ -1,7 +1,11 @@
 package utils
 
+import hajime.composeapp.generated.resources.Res
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+
 actual class ResourceReader {
-    actual suspend fun loadJsonFile(): String? {
-        TODO("Not yet implemented")
+    @OptIn(ExperimentalResourceApi::class)
+    actual suspend fun loadJsonFile(): String {
+        return Res.readBytes("files/armbar_200.json").toString()
     }
 }

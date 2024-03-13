@@ -1,5 +1,11 @@
 import androidx.compose.runtime.mutableStateListOf
 
+enum class VideoViewerEvent {
+    Next,
+    Previous,
+    ReturnBack,
+}
+
 class NavigationStack<T>(vararg initial: T) {
     val stack = mutableStateListOf(*initial)
     

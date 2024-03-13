@@ -9,15 +9,7 @@ enum class Destination {
     Home, Community, Account
 }
 
-enum class DetailRoute {
-    Dictionary
-}
 
-sealed class Page {
-    data class Main(val destination: Destination = Destination.entries.first()) : Page()
-
-    data class Detail(val detailRoute: DetailRoute) : Page()
-}
 
 @Composable
 fun BottomBarItem(destination: Destination, clickAction: (destination: Destination) -> Unit) {

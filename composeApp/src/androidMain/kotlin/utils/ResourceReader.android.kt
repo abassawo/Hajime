@@ -5,7 +5,7 @@ import com.lindenlabs.hajime.R
 
 
 actual class ResourceReader(private val context: Context) {
-    actual suspend fun loadJsonFile(): String? {
+    actual suspend fun loadJsonFile(): String {
         return context.resources.openRawResource(DATA_FILE_NAME)
             .bufferedReader().use { it.readText() }
     }

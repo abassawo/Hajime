@@ -5,11 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VideoCollection(
-    val data: MutableList<Video>,
-    val total: Int,
-    val page: Int,
-    @SerialName("per_page") val perPage: Int,
-    val paging: Paging
+    val data: MutableList<Video>
 )
 
 @Serializable
