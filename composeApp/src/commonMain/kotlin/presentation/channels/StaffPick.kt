@@ -1,3 +1,5 @@
+package presentation.channels
+
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text

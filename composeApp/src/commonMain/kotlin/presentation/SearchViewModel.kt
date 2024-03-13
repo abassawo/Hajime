@@ -21,6 +21,7 @@ class SearchViewModel(
     val platform: Platform,
     val tags: List<String> = emptyList() // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
+    var selectedVideo: Video? = null
     val isLocalDataEnabled: Boolean = true // todo - use a feature flag
     val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
     val mutableStateFlow: MutableStateFlow<VideoSetViewState> =

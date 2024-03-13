@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import presentation.VideoSetViewState
-import screens.App
+import presentation.App
 import utils.CommonPlatform
 
 fun main() = application {

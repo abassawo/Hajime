@@ -1,4 +1,4 @@
-package presentation.videos
+package presentation.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,16 +18,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import data.Video
+import presentation.SearchViewModel
 
 @Composable
-fun VideoPlayerScreen(selectedVideo: Video, videoCollection: List<Video>) {
-    Column(Modifier.fillMaxSize()) {
+fun VideoPlayerScreen(viewModel: SearchViewModel) {
+    val videoCollection = viewModel.allVideos
+    val selectedVideo: Video = viewModel.selectedVideo ?: videoCollection.first()
+    // todo - play selectedvideo
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.background(Color.Black).fillMaxWidth().height(300.dp)) {
             // todo - play video
         }
+        Text(text = selectedVideo.name ?: "", fontWeight = FontWeight.Bold, modifier =  Modifier.padding(vertical = 16.dp))
+        Text(text = selectedVideo.description ?: "", maxLines = 4, modifier =  Modifier.padding(horizontal = 16.dp))
         LazyColumn(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
             items(videoCollection) {
                 VideoCardTextNextToPreview(it)

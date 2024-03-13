@@ -1,6 +1,5 @@
 package presentation.channels
 
-import data.Channel
 import data.ChannelsResponse
 import data.VimeoRepository
 import data.VimeoService
@@ -10,7 +9,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import presentation.ChannelViewEntity
 
 sealed class ChannelsViewState {
     object Loading : ChannelsViewState()
@@ -33,7 +31,9 @@ class ChannelsViewModel(val vimeoService: VimeoService = VimeoRepository()) {
             runCatching { getChannels() }
                 .mapCatching { it.data.map { ChannelViewEntity(it) } }
                 .onSuccess { mutableStateFlow.value = ChannelsViewState.Content(it) }
-                .onFailure {  mutableStateFlow.value = ChannelsViewState.Error("An error occurred")  }
+                .onFailure {  mutableStateFlow.value =
+                    ChannelsViewState.Error("An error occurred")
+                }
         }
     }
 

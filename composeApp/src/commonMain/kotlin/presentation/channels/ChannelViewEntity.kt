@@ -1,4 +1,4 @@
-package presentation
+package presentation.channels
 
 import data.Channel
 import data.ChannelRaw

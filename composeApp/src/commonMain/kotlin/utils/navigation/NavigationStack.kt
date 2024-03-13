@@ -1,3 +1,5 @@
+package utils.navigation
+
 import androidx.compose.runtime.mutableStateListOf
 
 enum class VideoViewerEvent {
