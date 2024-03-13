@@ -1,6 +1,11 @@
 package data
 
-class LocalDataStore : VimeoService {
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import utils.ResourceReader
+
+class LocalDataStore constructor(val resourceReader: ResourceReader) : VimeoService {
     override suspend fun getChannels(): ChannelsResponse {
         TODO("Not yet implemented")
     }
@@ -9,8 +14,18 @@ class LocalDataStore : VimeoService {
         TODO("Not yet implemented")
     }
 
-    override suspend fun searchVideos(query: String): VideoCollection {
-        TODO("Not yet implemented")
+    private val json by lazy {
+        Json {
+            explicitNulls = false
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            prettyPrint = true
+            isLenient = true
+        }
     }
 
+    override suspend fun searchVideos(query: String): VideoCollection {
+        val stringResponse = resourceReader.loadJsonFile().toString()
+        return json.decodeFromString(stringResponse)
+    }
 }

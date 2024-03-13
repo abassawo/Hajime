@@ -1,7 +1,7 @@
 package utils
 
-internal actual class ResourceReader actual constructor() {
-    actual fun loadJsonFile(fileName: String): String? {
+actual class ResourceReader {
+    actual suspend fun loadJsonFile(): String? {
         TODO("Not yet implemented")
     }
 }

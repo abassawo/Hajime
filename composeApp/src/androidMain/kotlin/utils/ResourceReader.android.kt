@@ -1,15 +1,16 @@
 package utils
 
+import android.content.Context
 import com.lindenlabs.hajime.R
 
 
-internal actual class ResourceReader actual constructor() {
-    actual fun loadJsonFile(fileName: String): String? {
-       TODO()
+actual class ResourceReader(private val context: Context) {
+    actual suspend fun loadJsonFile(): String? {
+        return context.resources.openRawResource(DATA_FILE_NAME)
+            .bufferedReader().use { it.readText() }
     }
 
-
     companion object {
-        private val DATA_FILE_NAME = R.raw.armbar_200
+        val DATA_FILE_NAME = R.raw.armbar_200
     }
 }

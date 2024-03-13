@@ -2,13 +2,13 @@ package presentation
 
 import data.Video
 import data.VimeoRepository
-import data.VimeoService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import utils.Platform
 
 sealed class VideoSetViewState {
     object Loading : VideoSetViewState()
@@ -18,9 +18,11 @@ sealed class VideoSetViewState {
 
 
 class SearchViewModel(
-    val tags: List<String> = emptyList(),
-    val vimeoService: VimeoService = VimeoRepository()
+    val platform: Platform,
+    val tags: List<String> = emptyList() // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
+    val isLocalDataEnabled: Boolean = true // todo - use a feature flag
+    val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
     val mutableStateFlow: MutableStateFlow<VideoSetViewState> =
         MutableStateFlow(VideoSetViewState.Loading)
     val coroutineScope: CoroutineScope = CoroutineScope(
@@ -61,7 +63,9 @@ class SearchViewModel(
     fun fetchVideos(tag: String) {
         mutableStateFlow.value = VideoSetViewState.Loading
         coroutineScope.launch {
-            runCatching { vimeoService.searchVideos(tag) }
+            runCatching {
+                vimeoService.searchVideos(tag)
+            }
                 .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it.data) }
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
@@ -70,12 +74,11 @@ class SearchViewModel(
     }
 
     suspend fun getVideos(vararg tags: String): List<Video> {
-        return emptyList()
-//        return buildList<Video> {
-//            tags.forEach {
-//                val result = vimeoService.searchVideos(it).data
-//                addAll(result)
-//            }
-//        }
+        return buildList<Video> {
+            tags.forEach {
+                val result = vimeoService.searchVideos(it).data
+                addAll(result)
+            }
+        }
     }
 }

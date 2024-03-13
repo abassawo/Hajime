@@ -1,5 +1,6 @@
 package utils
 
-internal expect class ResourceReader() {
-    fun loadJsonFile(fileName: String): String?
+expect class ResourceReader {
+    suspend fun loadJsonFile(): String?
+
 }

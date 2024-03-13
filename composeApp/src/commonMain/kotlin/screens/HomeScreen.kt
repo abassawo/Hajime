@@ -25,7 +25,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.SearchViewModel
 import presentation.VideoSetViewState
 import presentation.videos.VideoCardTextBelowPreview
-import presentation.videos.VideoPlayerScreen
+import utils.Platform
 
 data class TopBarAction(val clickAction: () -> Unit)
 
@@ -36,7 +36,7 @@ fun MainTopBar(action: () -> Unit) {
 
 @Preview
 @Composable
-fun App() {
+fun App(platform: Platform) {
     val destinations = Destination.entries
     val selectedDestination = remember { mutableStateOf(destinations.first()) }
     Scaffold(Modifier.fillMaxSize(), topBar = { MainTopBar { } }, bottomBar = {
@@ -53,7 +53,7 @@ fun App() {
     }) {
         Column(Modifier.fillMaxSize().padding(it)) {
             when (selectedDestination.value) {
-                Destination.Home -> HomeScreen()
+                Destination.Home -> HomeScreen(platform)
                 Destination.Community -> Text("Community")
                 Destination.Account -> Text("Account")
             }
@@ -63,11 +63,11 @@ fun App() {
 
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(platform: Platform) {
     Column(Modifier.fillMaxSize()) {
         val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
         //        val showVideoPlayer = remember { mutableStateOf(false) }
-        val viewModel = remember { SearchViewModel(tags) }
+        val viewModel = remember { SearchViewModel(platform, tags) }
 
         Column(Modifier.fillMaxSize()) {
             when (val result = viewModel.mutableStateFlow.collectAsState().value) {

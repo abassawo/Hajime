@@ -6,15 +6,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import presentation.SearchViewModel
 import presentation.VideoSetViewState
+import utils.Platform
 
 @Composable
-
-fun ChannelResults(channel: String) {
-    val viewState = remember { SearchViewModel() }.mutableStateFlow.collectAsState()
+fun ChannelResults(platform: Platform, channel: String) {
+    val viewState =
+        remember { SearchViewModel(platform) } // todo - create dedicated viewmodel, pass in Channel
+            .mutableStateFlow.collectAsState()
 
     MaterialTheme {
         val channelViewState = viewState.value
-        when(channelViewState) {
+        when (channelViewState) {
             is VideoSetViewState.Content -> Text("Content WIP") // VideoPlayerScreen(channelViewState.videos)
             is VideoSetViewState.Error -> Text("Error occurred")
             VideoSetViewState.Loading -> CircularProgressIndicator()
