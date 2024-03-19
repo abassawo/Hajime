@@ -1,6 +1,5 @@
 package data
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,5 +21,5 @@ data class Video(
     val pictures: Pictures,
     val content_rating: List<String>
 ) {
-//    var streamUrl: String? = null
+    var streamUrl: String? = null
 }

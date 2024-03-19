@@ -1,6 +1,9 @@
-package presentation
+package presentation.screens
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import data.Video
+import data.VideoStreamResponse
 import data.VimeoRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,10 +25,12 @@ class SearchViewModel(
     val tags: List<String> = emptyList() // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
     var selectedVideo: Video? = null
-    val isLocalDataEnabled: Boolean = true // todo - use a feature flag
+    val isLocalDataEnabled: Boolean = false // todo - use a feature flag
     val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
     val mutableStateFlow: MutableStateFlow<VideoSetViewState> =
         MutableStateFlow(VideoSetViewState.Loading)
+
+    val streamUrl: MutableState<String> = mutableStateOf("")
     val coroutineScope: CoroutineScope = CoroutineScope(
         Dispatchers.IO + SupervisorJob()
     )
@@ -78,8 +83,41 @@ class SearchViewModel(
         return buildList<Video> {
             tags.forEach {
                 val result = vimeoService.searchVideos(it).data
+//                result.map { video ->
+//                    val id = video.uri?.replace("[^0-9]".toRegex(), "")
+//                    val restUrl = "https://player.vimeo.com/video/$id/config"
+//                    val mediaResponse = streamVideoFromUrl(restUrl)
+//                    video.streamUrl =  mediaResponse
+//                        .request?.files?.progressive?.firstOrNull()?.url ?: ""
+//                }
                 addAll(result)
             }
         }
     }
+
+    suspend fun streamVideoFromUrl(restUrl: String): VideoStreamResponse =
+        vimeoService.streamVideoFromUrl(restUrl)
+
+    fun prepareVideoPlayback(video: Video, emit: Boolean = false) {
+        selectedVideo = video
+        video.streamUrl?.let {
+            streamUrl.value = it
+        } ?: coroutineScope.launch {
+                val id = video.uri?.replace("[^0-9]".toRegex(), "")
+                val restUrl = "https://player.vimeo.com/video/$id/config"
+                val mediaResponse = streamVideoFromUrl(restUrl)
+                video.streamUrl = mediaResponse
+                    .request?.files?.progressive?.firstOrNull()?.url ?: ""
+            if(emit) {
+                streamUrl.value = mediaResponse
+                    .request?.files?.progressive?.firstOrNull()?.url ?: ""
+            }
+            }
+
+        }
+
+    fun onShareClicked(it: Video) {
+        // emit view event for sharing the video
+    }
+
 }

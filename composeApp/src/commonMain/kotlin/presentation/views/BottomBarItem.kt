@@ -1,4 +1,4 @@
-package ui
+package presentation.views
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 enum class Destination(val data: Any? = null) {
-    Home, Community, Account, VideoPlayer
+    Home, Explore, Community, Account, VideoPlayer
 }
 
 

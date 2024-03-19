@@ -43,7 +43,6 @@ class VimeoRepository : VimeoService {
     override suspend fun getChannels(): ChannelsResponse {
         val url = "https://api.vimeo.com/channels/"
         val query = URLBuilder(url).buildString()
-//        println(query)
         return client.get(query).body<ChannelsResponse>().also {
             println("Response $it")
         }
@@ -62,6 +61,11 @@ class VimeoRepository : VimeoService {
         }.buildString()
         return client.get(searchQuery).body()
 
+    }
+
+    override suspend fun streamVideoFromUrl(restUrl: String): VideoStreamResponse {
+        val urlBuilder = URLBuilder(restUrl).buildString()
+        return client.get(urlBuilder).body()
     }
 
 

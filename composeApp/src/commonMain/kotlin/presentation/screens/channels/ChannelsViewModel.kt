@@ -1,4 +1,4 @@
-package presentation.channels
+package presentation.screens.channels
 
 import data.ChannelsResponse
 import data.VimeoRepository

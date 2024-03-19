@@ -35,11 +35,13 @@ kotlin {
         val coroutinesVersion = "1.6.2"
 
 
-
         androidMain.dependencies {
             implementation(libs.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation("io.ktor:ktor-client-android:2.2.4")
+            implementation("androidx.media3:media3-exoplayer:1.1.0")
+            implementation("androidx.media3:media3-exoplayer-dash:1.1.0")
+            implementation("androidx.media3:media3-ui:1.1.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -56,11 +58,11 @@ kotlin {
             implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
             implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
             implementation("io.ktor:ktor-client-auth:$ktorVersion")
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.ktor.client.okhttp)
-//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2")
         }
         iosMain.dependencies {

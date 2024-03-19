@@ -1,4 +1,4 @@
-package presentation.channels
+package presentation.screens.channels
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
