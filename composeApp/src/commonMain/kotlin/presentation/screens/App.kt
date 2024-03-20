@@ -42,7 +42,7 @@ fun App(platform: Platform = CommonPlatform()) {
 
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
-            MainTopBar(navigationStack, )
+            MainTopBar(searchViewModel, navigationStack)
         },
         bottomBar = {
             if(navigationStack.lastWithIndex().value != Destination.VideoPlayer) {

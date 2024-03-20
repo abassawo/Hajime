@@ -26,7 +26,7 @@ import utils.navigation.NavigationStack
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MainTopBar(searchViewModel: SearchViewModel, navigationStack: NavigationStack<Any>) {
+fun MainTopBar(searchViewModel: SearchViewModel, navigationStack: NavigationStack<Destination>) {
     val isVideoPlayerScreen = navigationStack.lastWithIndex().value == Destination.VideoPlayer
     val video = searchViewModel.selectedVideo
     val backAction = {
