@@ -24,7 +24,6 @@ class SearchViewModel(
     val platform: Platform,
     val tags: List<String> = listOf("armbar", "triangle", "guillotine", "ezquiel") // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
-    var isFirstRun: Boolean = true
     var selectedVideo: Video? = null
     val isLocalDataEnabled: Boolean = false // todo - use a feature flag
     val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
@@ -37,6 +36,23 @@ class SearchViewModel(
     )
     val allVideos: MutableList<Video> = mutableListOf()
     var iterator = tags.iterator()
+
+    init {
+        refresh()
+    }
+
+    fun refresh() {
+        if (iterator.hasNext()) {
+            val nextTag = iterator.next()
+            coroutineScope.launch {
+                val videos = getVideos(nextTag)
+                allVideos.addAll(videos)
+                mutableStateFlow.value = VideoSetViewState.Content(allVideos)
+            }
+        } else {
+            iterator = tags.iterator()
+        }
+    }
 
     fun refresh(topic: String) {
         coroutineScope.launch {

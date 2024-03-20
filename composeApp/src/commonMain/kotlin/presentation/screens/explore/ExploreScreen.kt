@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +46,9 @@ val verticalGradient = Brush.verticalGradient(
 @Composable
 fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Video) -> Unit) {
     val viewModel = remember { SearchViewModel(platform) }
+    LaunchedEffect(topic) {
+        viewModel.getVideos(topic)
+    }
 
     Column(Modifier.fillMaxSize()
         .background(brush = verticalGradient)
