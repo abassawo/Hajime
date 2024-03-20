@@ -7,6 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import data.BeltLevel
 import kotlinx.datetime.LocalDateTime
 import presentation.views.CurriculumCard
 import utils.DateTimeUtil
@@ -15,8 +16,9 @@ import utils.DateTimeUtil
 fun HomeScreen() {
     val homeViewModel = HomeViewModel()
     val curriculum = homeViewModel.learningCurriculum
+    val currentBeltLevel = BeltLevel.White // todo - retrieve this from KYC data
     LazyColumn(Modifier.fillMaxSize()) {
-        items(curriculum.entries.toList()) { entry ->
+        items(curriculum.entries.filter { it.key == currentBeltLevel }) { entry ->
             CurriculumCard(entry)
         }
     }

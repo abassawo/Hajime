@@ -11,6 +11,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import utils.CommonPlatform
 import utils.Platform
 
 sealed class VideoSetViewState {
@@ -21,9 +22,10 @@ sealed class VideoSetViewState {
 
 
 class SearchViewModel(
-    val platform: Platform,
+    val platform: Platform = CommonPlatform(),
     val tags: List<String> = listOf("armbar", "triangle", "guillotine", "ezquiel") // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
+//    var selectedTopic: String = tags.first()
     var selectedVideo: Video? = null
     val isLocalDataEnabled: Boolean = false // todo - use a feature flag
     val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
@@ -34,32 +36,27 @@ class SearchViewModel(
     val coroutineScope: CoroutineScope = CoroutineScope(
         Dispatchers.IO + SupervisorJob()
     )
-    val allVideos: MutableList<Video> = mutableListOf()
+    val allVideos: MutableSet<Video> = mutableSetOf()
     var iterator = tags.iterator()
 
-    init {
-        refresh()
-    }
-
-    fun refresh() {
-        if (iterator.hasNext()) {
-            val nextTag = iterator.next()
-            coroutineScope.launch {
-                val videos = getVideos(nextTag)
-                allVideos.addAll(videos)
-                mutableStateFlow.value = VideoSetViewState.Content(allVideos)
-            }
-        } else {
-            iterator = tags.iterator()
-        }
-    }
 
     fun refresh(topic: String) {
         coroutineScope.launch {
+            // todo - paginate
             val videos = getVideos(topic)
             allVideos.addAll(videos)
-            mutableStateFlow.value = VideoSetViewState.Content(allVideos)
+            mutableStateFlow.value = VideoSetViewState.Content(allVideos.toList())
         }
+//        if (iterator.hasNext()) {
+//            val nextTag = iterator.next()
+//            coroutineScope.launch {
+//                val videos = getVideos(nextTag)
+//                allVideos.addAll(videos)
+//                mutableStateFlow.value = VideoSetViewState.Content(allVideos)
+//            }
+//        } else {
+//            iterator = tags.iterator()
+//        }
     }
 
     fun fetchChannel(channelName: String) {
@@ -67,7 +64,10 @@ class SearchViewModel(
         coroutineScope.launch {
             runCatching { vimeoService.getVideos(channelName) }
                 .mapCatching { it }
-                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it.data) }
+                .onSuccess {
+                    mutableStateFlow.value = VideoSetViewState.Content(it.data)
+                    allVideos.addAll(it.data)
+                }
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
                 }
@@ -80,24 +80,27 @@ class SearchViewModel(
             runCatching {
                 vimeoService.searchVideos(tag)
             }
-                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it.data) }
+                .onSuccess {
+                    mutableStateFlow.value = VideoSetViewState.Content(it.data)
+                    allVideos.addAll(it.data)
+                }
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
                 }
         }
     }
 
-    suspend fun getVideos(vararg tags: String): List<Video> {
+    private suspend fun getVideos(vararg tags: String): List<Video> {
         return buildList<Video> {
             tags.forEach {
                 val result = vimeoService.searchVideos(it).data
-//                result.map { video ->
-//                    val id = video.uri?.replace("[^0-9]".toRegex(), "")
-//                    val restUrl = "https://player.vimeo.com/video/$id/config"
-//                    val mediaResponse = streamVideoFromUrl(restUrl)
-//                    video.streamUrl =  mediaResponse
-//                        .request?.files?.progressive?.firstOrNull()?.url ?: ""
-//                }
+                result.map { video ->
+                    val id = video.uri?.replace("[^0-9]".toRegex(), "")
+                    val restUrl = "https://player.vimeo.com/video/$id/config"
+                    val mediaResponse = streamVideoFromUrl(restUrl)
+                    video.streamUrl =  mediaResponse
+                        .request?.files?.progressive?.firstOrNull()?.url ?: ""
+                }
                 addAll(result)
             }
         }

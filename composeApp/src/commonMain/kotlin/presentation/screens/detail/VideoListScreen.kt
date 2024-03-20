@@ -15,7 +15,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,48 +25,55 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import data.Video
-import presentation.screens.SearchViewModel
 import presentation.views.VideoPlayer
+import utils.Platform
+
+data class VideoPlayerData(val video: Video, val relatedVideos: List<Video>)
 
 @Composable
-fun VideoPlayerScreen(viewModel: SearchViewModel) {
-    val videoCollection = viewModel.allVideos
-    var selectedVideo: Video =  remember {  viewModel.selectedVideo ?: videoCollection.first() }
+fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
+    val viewModel = remember { platform.searchViewModel }
 
-    key(selectedVideo) {
-        val playbackUrl = viewModel.streamUrl.value
-        if (playbackUrl.isNotEmpty()) {
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                selectedVideo.streamUrl?.let {
-                    VideoPlayer(
-                        Modifier.background(Color.Black).fillMaxWidth().height(300.dp),
-                        url = it
-                    )
-                } ?: Text("Error occurred")
+    val video = data.video
+    LaunchedEffect(video) {
+        viewModel.prepareVideoPlayback(video)
+    }
 
-                Text(
-                    text = selectedVideo.name ?: "",
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(vertical = 16.dp)
+
+    val playbackUrl = viewModel.streamUrl.value
+    if (playbackUrl.isNotEmpty()) {
+        Column(
+            Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            video.streamUrl?.let {
+                VideoPlayer(
+                    Modifier.background(Color.Black).fillMaxWidth().height(300.dp),
+                    url = it
                 )
-                Text(
-                    text = selectedVideo.description ?: "",
-                    maxLines = 4,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                LazyColumn(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-                    item { Spacer(Modifier.height(16.dp)) }
-                    item { Text("Similar videos") }
-                    items(videoCollection - selectedVideo) {
-                        VideoCardTextNextToPreview(it) {
-                            selectedVideo = it
-                        }
-                        Divider(Modifier.background(Color.Black))
+            } ?: Text("Error occurred")
+
+            Text(
+                text = video.name ?: "",
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+            Text(
+                text = video.description ?: "",
+                maxLines = 4,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            LazyColumn(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                item { Spacer(Modifier.height(16.dp)) }
+                item { Text("Related videos") }
+                items(data.relatedVideos) {
+                    VideoCardTextNextToPreview(it) {
+//                        video = it
                     }
+                    Divider(Modifier.background(Color.Black))
                 }
             }
         }
-
     }
 }
 
