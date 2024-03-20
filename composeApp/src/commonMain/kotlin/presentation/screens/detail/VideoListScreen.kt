@@ -41,7 +41,7 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
 
 
     val playbackUrl = viewModel.streamUrl.value
-    if (playbackUrl.isNotEmpty()) {
+//    if (playbackUrl.isNotEmpty()) {
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -74,7 +74,7 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
                 }
             }
         }
-    }
+//    }
 }
 
 @Composable

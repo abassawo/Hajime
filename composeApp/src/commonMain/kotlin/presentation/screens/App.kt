@@ -87,14 +87,14 @@ fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
                     Destination.Explore -> {
-//                        ExploreTopicsScreen(navigationStack)
-                        val nextUpTopicForCurrentUser = "armbar"
-                        VideoResultsGrid(nextUpTopicForCurrentUser, CommonPlatform(), {
-                            searchViewModel.prepareVideoPlayback(it)
-                            val destination = Destination.VideoPlayer
-                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
-                            navigationStack.push(destination)
-                        })
+                        ExploreTopicsScreen(navigationStack)
+//                        val nextUpTopicForCurrentUser = "armbar"
+//                        VideoResultsGrid(nextUpTopicForCurrentUser, CommonPlatform(), {
+//                            searchViewModel.prepareVideoPlayback(it)
+//                            val destination = Destination.VideoPlayer
+//                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
+//                            navigationStack.push(destination)
+//                        })
                     }
 
                     Destination.Community -> Text(
