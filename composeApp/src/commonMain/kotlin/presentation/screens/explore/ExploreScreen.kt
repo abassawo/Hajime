@@ -43,11 +43,8 @@ val verticalGradient = Brush.verticalGradient(
 )
 
 @Composable
-fun ExploreScreen(platform: Platform, clickAction: (video: Video) -> Unit) {
-
-
-    val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
-    val viewModel = remember { SearchViewModel(platform, tags) }
+fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Video) -> Unit) {
+    val viewModel = remember { SearchViewModel(platform) }
 
     Column(Modifier.fillMaxSize()
         .background(brush = verticalGradient)
@@ -62,12 +59,6 @@ fun ExploreScreen(platform: Platform, clickAction: (video: Video) -> Unit) {
                     delta
                 })
         ) {
-//            Image(
-//                painter = painterResource(Res.drawable.gradient_blue),
-//                contentDescription = "gradient",
-//                contentScale = ContentScale.FillBounds,
-//                modifier = Modifier.height(280.dp).fillMaxWidth()
-//            )
             Spacer(Modifier.height(200.dp))
             when (val result = viewModel.mutableStateFlow.collectAsState().value) {
                 is VideoSetViewState.Content -> {

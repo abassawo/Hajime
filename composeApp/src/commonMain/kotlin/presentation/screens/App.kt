@@ -16,15 +16,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.detail.VideoPlayerScreen
-import presentation.screens.explore.ExploreScreen
 import presentation.screens.explore.verticalGradient
 import presentation.screens.home.HomeScreen
+import presentation.screens.onboarding.OnboardingFlow
 import presentation.views.BottomBarItem
 import presentation.views.Destination
 import presentation.views.MainTopBar
 import utils.CommonPlatform
 import utils.Platform
 import utils.navigation.NavigationStack
+
 
 @Preview
 @Composable
@@ -34,42 +35,49 @@ fun App(platform: Platform = CommonPlatform()) {
         saver = listSaver(
             restore = { NavigationStack(*it.toTypedArray()) },
             save = { it.stack },
-        )
+            )
     ) {
         NavigationStack(Destination.Home)
     }
+    if(searchViewModel.isFirstRun) {
+        searchViewModel.isFirstRun = false
+        OnboardingFlow(navigationStack)
+    } else {
+        AppScaffold(searchViewModel, navigationStack)
+    }
+}
 
-
+@Composable
+fun AppScaffold(searchViewModel: SearchViewModel, navigationStack: NavigationStack<Destination>) {
     Scaffold(Modifier.fillMaxSize(),
-        topBar = {
-            MainTopBar(navigationStack, )
-        },
-        bottomBar = {
-            if(navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
-                BottomAppBar {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val destinations =
-                            listOf(Destination.Home, Destination.Explore, Destination.Community)
-                        destinations.forEach {
-                            BottomBarItem(it) { destination ->
-                                navigationStack.push(destination)
-                            }
-                        }
-                    }
-                }
-            }
-        }) {
+             topBar = {
+                 MainTopBar(searchViewModel, navigationStack)
+                      },
+             bottomBar = {
+                 if(navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
+                     BottomAppBar {
+                         Row(
+                             horizontalArrangement = Arrangement.SpaceBetween,
+                             modifier = Modifier.fillMaxWidth()
+                         ) {
+                             val destinations =
+                                 listOf(Destination.Home, Destination.Explore, Destination.Community)
+                             destinations.forEach {
+                                 BottomBarItem(it) { destination ->
+                                     navigationStack.push(destination)
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }) {
         Box(Modifier.fillMaxSize().background(verticalGradient)) {
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
-                    Destination.Explore -> ExploreScreen(platform) { video ->
-                        searchViewModel.prepareVideoPlayback(video, true)
-                        navigationStack.push(Destination.VideoPlayer)
-                    }
+                    Destination.Explore -> {
+                        val topic = searchViewModel.tags.firstOrNull() ?: "armbar"
 
+                    }
                     Destination.Community -> Text(
                         "Community", Modifier.fillMaxSize()
                     )
