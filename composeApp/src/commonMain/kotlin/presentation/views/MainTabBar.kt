@@ -16,20 +16,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import data.Video
 import hajime.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import presentation.screens.SearchViewModel
 import utils.navigation.NavigationStack
 
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun MainTopBar(searchViewModel: SearchViewModel, navigationStack: NavigationStack<Destination>) {
-    val isVideoPlayerScreen = navigationStack.lastWithIndex().value == Destination.VideoPlayer
-    val video = searchViewModel.selectedVideo
+fun MainTopBar(navigationStack: NavigationStack<Destination>) {
+    val hasBackIcon = navigationStack.lastWithIndex().value.name.startsWith("Video")
+    val video = navigationStack.lastWithIndex().value.data as? Video?
+
     val backAction = {
-        navigationStack.back()
+        if (hasBackIcon) {
+            navigationStack.backUntil(Destination.VideoResults)
+        } else {
+            navigationStack.back()
+        }
     }
     val backArrowResource = Icons.Default.ArrowBack
     TopAppBar(
@@ -41,7 +46,7 @@ fun MainTopBar(searchViewModel: SearchViewModel, navigationStack: NavigationStac
         },
         navigationIcon = {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                if (isVideoPlayerScreen) {
+                if (hasBackIcon) {
                     Icon(
                         backArrowResource,
                         "",
@@ -56,13 +61,13 @@ fun MainTopBar(searchViewModel: SearchViewModel, navigationStack: NavigationStac
                 }
             }
         }, actions = {
-            if(isVideoPlayerScreen) {
+            if (hasBackIcon) {
                 video?.let {
                     Icon(
                         Icons.Default.Share,
                         "",
                         modifier = Modifier.padding(0.dp).clickable {
-                            searchViewModel.onShareClicked(it)
+//                            searchViewModel.onShareClicked(it)
                         })
                 }
 

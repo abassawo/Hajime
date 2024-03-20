@@ -11,12 +11,13 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import presentation.screens.detail.VideoPlayerData
 import presentation.screens.detail.VideoPlayerScreen
+import presentation.screens.explore.ExploreTopicsScreen
 import presentation.screens.explore.VideoResultsGrid
 import presentation.screens.explore.verticalGradient
 import presentation.screens.home.HomeScreen
@@ -26,12 +27,13 @@ import presentation.views.BottomBarItem
 import presentation.views.Destination
 import presentation.views.MainTopBar
 import utils.CommonPlatform
+import utils.Platform
 import utils.navigation.NavigationStack
 
 
 @Preview
 @Composable
-fun App(onboardingViewModel: OnboardingViewModel) {
+fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel()) {
     val navigationStack = rememberSaveable(
         saver = listSaver(
             restore = { NavigationStack(*it.toTypedArray()) },
@@ -44,16 +46,16 @@ fun App(onboardingViewModel: OnboardingViewModel) {
         onboardingViewModel.isFirstRun = false
         OnboardingFlow(onboardingViewModel)
     } else {
-        AppScaffold(navigationStack)
+        AppScaffold(CommonPlatform(navigationStack))
     }
 }
 
 @Composable
-fun AppScaffold(navigationStack: NavigationStack<Destination>) {
-    val searchViewModel = remember { SearchViewModel(CommonPlatform()) }
+fun AppScaffold(platform: Platform) {
+    val navigationStack = platform.navigationStack
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
-            MainTopBar(searchViewModel, navigationStack)
+            MainTopBar(navigationStack)
         },
         bottomBar = {
             if (navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
@@ -63,7 +65,13 @@ fun AppScaffold(navigationStack: NavigationStack<Destination>) {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         val destinations =
-                            listOf(Destination.Home, Destination.Explore, Destination.Community)
+                            listOf(
+                                Destination.Home,
+                                Destination.Explore,
+                                Destination.Favorites,
+                                Destination.Community,
+                                Destination.Profile
+                            )
                         destinations.forEach {
                             BottomBarItem(it) { destination ->
                                 navigationStack.push(destination)
@@ -77,23 +85,37 @@ fun AppScaffold(navigationStack: NavigationStack<Destination>) {
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
                     Destination.Explore -> {
-                        val topic = searchViewModel.tags.firstOrNull() ?: "armbar"
-                        VideoResultsGrid(topic, CommonPlatform(), { video ->
-                            searchViewModel.prepareVideoPlayback(video, true)
-                            navigationStack.push(Destination.VideoPlayer)
-                        })
-
+                        ExploreTopicsScreen(platform)
                     }
+
                     Destination.Community -> Text(
                         "Community", Modifier.fillMaxSize()
                     )
 
-                    Destination.Account -> Text(
+                    Destination.Profile -> Text(
                         "Account"
                     )
 
-                    Destination.VideoPlayer -> VideoPlayerScreen(searchViewModel)
-                    Destination.Home -> HomeScreen()
+                    Destination.VideoPlayer -> VideoPlayerScreen(
+                        platform,
+                        page.data as VideoPlayerData
+                    )
+
+                    Destination.Home -> HomeScreen(platform)
+                    Destination.Favorites -> Text(
+                        "Inbox"
+                    )
+
+                    Destination.VideoResults -> VideoResultsGrid(
+                        page.data as? String ?: "",
+                        platform
+//                        {
+//                            searchViewModel.prepareVideoPlayback(it)
+//                            val destination = Destination.VideoPlayer
+//                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
+//                            navigationStack.push(destination)
+//                        }
+                    )
                 }
             }
         }

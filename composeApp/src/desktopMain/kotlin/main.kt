@@ -13,7 +13,7 @@ import utils.CommonPlatform
 
 fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Hajime") {
-        App(CommonPlatform())
+        App()
     }
 }
 
