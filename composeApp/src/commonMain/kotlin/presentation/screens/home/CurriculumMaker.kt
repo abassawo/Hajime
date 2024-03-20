@@ -27,7 +27,7 @@ class CurriculumMaker {
     fun makeCurriculum(): Map<BeltLevel, List<CurriculumModel>> {
         return buildMap {
             BeltLevel.entries.forEach { belt ->
-                when (belt) {
+                val curriculum = when (belt) {
                     BeltLevel.White -> whiteBeltCurriculum
                     BeltLevel.Blue -> blueBeltCurriculum
                     BeltLevel.Purple -> purpleBeltCurriculum
@@ -35,6 +35,7 @@ class CurriculumMaker {
                     BeltLevel.Black -> blackBeltCurriculum
                     BeltLevel.None -> noBeltCurriculum
                 }
+                put(belt, curriculum)
             }
         }
     }

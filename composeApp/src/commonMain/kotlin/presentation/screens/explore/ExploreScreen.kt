@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,11 +44,11 @@ val verticalGradient = Brush.verticalGradient(
 )
 
 @Composable
-fun ExploreScreen(platform: Platform, clickAction: (video: Video) -> Unit) {
-
-
-    val tags = listOf("armbar", "triangle", "guillotine", "ezquiel")
-    val viewModel = remember { SearchViewModel(platform, tags) }
+fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Video) -> Unit) {
+    val viewModel = remember { SearchViewModel(platform) }
+    LaunchedEffect(topic) {
+        viewModel.getVideos(topic)
+    }
 
     Column(Modifier.fillMaxSize()
         .background(brush = verticalGradient)
@@ -62,12 +63,6 @@ fun ExploreScreen(platform: Platform, clickAction: (video: Video) -> Unit) {
                     delta
                 })
         ) {
-//            Image(
-//                painter = painterResource(Res.drawable.gradient_blue),
-//                contentDescription = "gradient",
-//                contentScale = ContentScale.FillBounds,
-//                modifier = Modifier.height(280.dp).fillMaxWidth()
-//            )
             Spacer(Modifier.height(200.dp))
             when (val result = viewModel.mutableStateFlow.collectAsState().value) {
                 is VideoSetViewState.Content -> {

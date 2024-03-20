@@ -22,7 +22,7 @@ sealed class VideoSetViewState {
 
 class SearchViewModel(
     val platform: Platform,
-    val tags: List<String> = emptyList() // Currently being used to serve test data, could be potentially a memory cahe in future
+    val tags: List<String> = listOf("armbar", "triangle", "guillotine", "ezquiel") // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
     var selectedVideo: Video? = null
     val isLocalDataEnabled: Boolean = false // todo - use a feature flag
@@ -51,6 +51,14 @@ class SearchViewModel(
             }
         } else {
             iterator = tags.iterator()
+        }
+    }
+
+    fun refresh(topic: String) {
+        coroutineScope.launch {
+            val videos = getVideos(topic)
+            allVideos.addAll(videos)
+            mutableStateFlow.value = VideoSetViewState.Content(allVideos)
         }
     }
 

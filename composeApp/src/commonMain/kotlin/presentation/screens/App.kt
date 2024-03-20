@@ -11,25 +11,27 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.detail.VideoPlayerScreen
-import presentation.screens.explore.ExploreScreen
+import presentation.screens.explore.VideoResultsGrid
 import presentation.screens.explore.verticalGradient
 import presentation.screens.home.HomeScreen
+import presentation.screens.onboarding.OnboardingFlow
+import presentation.screens.onboarding.OnboardingViewModel
 import presentation.views.BottomBarItem
 import presentation.views.Destination
 import presentation.views.MainTopBar
 import utils.CommonPlatform
-import utils.Platform
 import utils.navigation.NavigationStack
+
 
 @Preview
 @Composable
-fun App(platform: Platform = CommonPlatform()) {
-    val searchViewModel = SearchViewModel(platform)
+fun App(onboardingViewModel: OnboardingViewModel) {
     val navigationStack = rememberSaveable(
         saver = listSaver(
             restore = { NavigationStack(*it.toTypedArray()) },
@@ -38,14 +40,23 @@ fun App(platform: Platform = CommonPlatform()) {
     ) {
         NavigationStack(Destination.Home)
     }
+    if (onboardingViewModel.isFirstRun) {
+        onboardingViewModel.isFirstRun = false
+        OnboardingFlow(onboardingViewModel)
+    } else {
+        AppScaffold(navigationStack)
+    }
+}
 
-
+@Composable
+fun AppScaffold(navigationStack: NavigationStack<Destination>) {
+    val searchViewModel = remember { SearchViewModel(CommonPlatform()) }
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(searchViewModel, navigationStack)
         },
         bottomBar = {
-            if(navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
+            if (navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
                 BottomAppBar {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -65,17 +76,21 @@ fun App(platform: Platform = CommonPlatform()) {
         Box(Modifier.fillMaxSize().background(verticalGradient)) {
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
-                    Destination.Explore -> ExploreScreen(platform) { video ->
-                        searchViewModel.prepareVideoPlayback(video, true)
-                        navigationStack.push(Destination.VideoPlayer)
-                    }
+                    Destination.Explore -> {
+                        val topic = searchViewModel.tags.firstOrNull() ?: "armbar"
+                        VideoResultsGrid(topic, CommonPlatform(), { video ->
+                            searchViewModel.prepareVideoPlayback(video, true)
+                            navigationStack.push(Destination.VideoPlayer)
+                        })
 
+                    }
                     Destination.Community -> Text(
                         "Community", Modifier.fillMaxSize()
                     )
 
                     Destination.Account -> Text(
-                        "Account")
+                        "Account"
+                    )
 
                     Destination.VideoPlayer -> VideoPlayerScreen(searchViewModel)
                     Destination.Home -> HomeScreen()
