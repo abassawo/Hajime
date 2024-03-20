@@ -26,11 +26,15 @@ import utils.navigation.NavigationStack
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun MainTopBar(navigationStack: NavigationStack<Destination>) {
-    val isVideoPlayerScreen = navigationStack.lastWithIndex().value == Destination.VideoPlayer
+    val hasBackIcon = navigationStack.lastWithIndex().value.name.startsWith("Video")
     val video = navigationStack.lastWithIndex().value.data as? Video?
 
     val backAction = {
-        navigationStack.back()
+        if (hasBackIcon) {
+            navigationStack.backUntil(Destination.VideoResults)
+        } else {
+            navigationStack.back()
+        }
     }
     val backArrowResource = Icons.Default.ArrowBack
     TopAppBar(
@@ -42,7 +46,7 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
         },
         navigationIcon = {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                if (isVideoPlayerScreen) {
+                if (hasBackIcon) {
                     Icon(
                         backArrowResource,
                         "",
@@ -57,7 +61,7 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
                 }
             }
         }, actions = {
-            if(isVideoPlayerScreen) {
+            if (hasBackIcon) {
                 video?.let {
                     Icon(
                         Icons.Default.Share,

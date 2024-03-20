@@ -11,10 +11,11 @@ import data.BeltLevel
 import kotlinx.datetime.LocalDateTime
 import presentation.views.CurriculumCard
 import utils.DateTimeUtil
+import utils.Platform
 
 @Composable
-fun HomeScreen() {
-    val homeViewModel = HomeViewModel()
+fun HomeScreen(platform: Platform) {
+    val homeViewModel = HomeViewModel(platform)
     val curriculum = homeViewModel.learningCurriculum
     val currentBeltLevel = BeltLevel.White // todo - retrieve this from KYC data
     LazyColumn(Modifier.fillMaxSize()) {

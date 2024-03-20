@@ -11,11 +11,9 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import data.Video
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.detail.VideoPlayerData
 import presentation.screens.detail.VideoPlayerScreen
@@ -48,13 +46,13 @@ fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel()) {
         onboardingViewModel.isFirstRun = false
         OnboardingFlow(onboardingViewModel)
     } else {
-        AppScaffold(CommonPlatform(), navigationStack)
+        AppScaffold(CommonPlatform(navigationStack))
     }
 }
 
 @Composable
-fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination>) {
-    val searchViewModel = remember { platform.searchViewModel }
+fun AppScaffold(platform: Platform) {
+    val navigationStack = platform.navigationStack
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(navigationStack)
@@ -87,14 +85,7 @@ fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
                     Destination.Explore -> {
-                        ExploreTopicsScreen(navigationStack)
-//                        val nextUpTopicForCurrentUser = "armbar"
-//                        VideoResultsGrid(nextUpTopicForCurrentUser, CommonPlatform(), {
-//                            searchViewModel.prepareVideoPlayback(it)
-//                            val destination = Destination.VideoPlayer
-//                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
-//                            navigationStack.push(destination)
-//                        })
+                        ExploreTopicsScreen(platform)
                     }
 
                     Destination.Community -> Text(
@@ -110,20 +101,21 @@ fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination
                         page.data as VideoPlayerData
                     )
 
-                    Destination.Home -> HomeScreen()
+                    Destination.Home -> HomeScreen(platform)
                     Destination.Favorites -> Text(
                         "Inbox"
                     )
 
                     Destination.VideoResults -> VideoResultsGrid(
                         page.data as? String ?: "",
-                        CommonPlatform(),
-                        {
-                            searchViewModel.prepareVideoPlayback(it)
-                            val destination = Destination.VideoPlayer
-                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
-                            navigationStack.push(destination)
-                        })
+                        platform
+//                        {
+//                            searchViewModel.prepareVideoPlayback(it)
+//                            val destination = Destination.VideoPlayer
+//                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
+//                            navigationStack.push(destination)
+//                        }
+                    )
                 }
             }
         }

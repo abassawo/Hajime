@@ -26,5 +26,10 @@ class NavigationStack<T>(vararg initial: T) {
         stack.removeRange(fromIndex = 1, toIndex = stack.size)
     }
     
-    fun lastWithIndex() = stack.withIndex().last()
+    fun lastWithIndex(): IndexedValue<T> = stack.withIndex().last()
+    fun backUntil(destination: T) {
+        while(lastWithIndex().value != destination) {
+            back()
+        }
+    }
 }

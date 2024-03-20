@@ -5,7 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -22,10 +29,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.unit.dp
 import data.Video
-import io.ktor.websocket.*
 import presentation.screens.SearchViewModel
 import presentation.screens.VideoSetViewState
 import presentation.screens.detail.VideoCardTextBelowPreview
+import presentation.screens.detail.VideoPlayerData
 import presentation.screens.home.HomeViewModel
 import presentation.views.Destination
 import utils.Platform
@@ -44,10 +51,11 @@ val verticalGradient = Brush.verticalGradient(
     )
 )
 
+data class ExploreScreenPayload(val topic: String, val video: Video, val allVideos: List<Video>)
 
 @Composable
-fun ExploreTopicsScreen(navigationStack: NavigationStack<Destination>) {
-    val homeViewModel = HomeViewModel()
+fun ExploreTopicsScreen(platform: Platform) {
+    val homeViewModel = HomeViewModel(platform)
     val curriculum = homeViewModel.learningCurriculum
 
     val allTopics = curriculum.values.toList().flatten()
@@ -61,7 +69,7 @@ fun ExploreTopicsScreen(navigationStack: NavigationStack<Destination>) {
                 Text(text = curriculum, modifier = Modifier.clickable {
                     val videoResultsDestination = Destination.VideoResults
                     videoResultsDestination.data = curriculum
-                    navigationStack.push(videoResultsDestination)
+                    platform.navigationStack.push(videoResultsDestination)
                 })
             }
         }
@@ -70,7 +78,11 @@ fun ExploreTopicsScreen(navigationStack: NavigationStack<Destination>) {
 
 
 @Composable
-fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Video) -> Unit) {
+fun VideoResultsGrid(
+    topic: String,
+    platform: Platform,
+    navigationStack: NavigationStack<Destination> = platform.navigationStack
+) {
     val viewModel = remember { SearchViewModel(platform) }
     LaunchedEffect(topic) {
         viewModel.fetchVideos(topic)
@@ -78,10 +90,11 @@ fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Vid
 
     val viewState = viewModel.mutableStateFlow.collectAsState()
 
-    when(viewState.value) {
+    when (viewState.value) {
         is VideoSetViewState.Content -> {
-            Column(Modifier.fillMaxSize()
-                .background(brush = verticalGradient)
+            Column(
+                Modifier.fillMaxSize()
+                    .background(brush = verticalGradient)
 
             ) {
                 var offset = remember { mutableStateOf(0f) }
@@ -102,15 +115,22 @@ fun VideoResultsGrid(topic: String, platform: Platform, clickAction: (video: Vid
                                 Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                             ) {
                                 items(result.videos) {
-                                    VideoCardTextBelowPreview(it, clickAction)
+                                    VideoCardTextBelowPreview(it) {
+                                        val destination = Destination.VideoPlayer
+                                        viewModel.prepareVideoPlayback(it)
+                                        destination.data = VideoPlayerData(it, result.videos - it)
+                                        navigationStack.push(Destination.VideoPlayer)
+                                    }
                                 }
                             }
                         }
+
                         else -> Unit
                     }
                 }
             }
         }
+
         is VideoSetViewState.Error -> Text("Error")
         VideoSetViewState.Loading -> Text("Loading")
     }

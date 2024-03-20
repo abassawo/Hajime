@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import data.Video
+import presentation.views.Destination
 import presentation.views.VideoPlayer
 import utils.Platform
 
@@ -34,24 +35,26 @@ data class VideoPlayerData(val video: Video, val relatedVideos: List<Video>)
 fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
     val viewModel = remember { platform.searchViewModel }
 
-    val video = data.video
+    var video = data.video
     LaunchedEffect(video) {
         viewModel.prepareVideoPlayback(video)
     }
 
 
-    val playbackUrl = viewModel.streamUrl.value
+    val playbackUrl = data.video.streamUrl ?: viewModel.streamUrl.value
 //    if (playbackUrl.isNotEmpty()) {
         Column(
             Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            video.streamUrl?.let {
+            if(playbackUrl.isNotEmpty()) {
                 VideoPlayer(
                     Modifier.background(Color.Black).fillMaxWidth().height(300.dp),
-                    url = it
+                    url = playbackUrl
                 )
-            } ?: Text("Error occurred")
+            } else {
+                Text("Error occurred")
+            }
 
             Text(
                 text = video.name ?: "",
@@ -67,8 +70,11 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
                 item { Spacer(Modifier.height(16.dp)) }
                 item { Text("Related videos") }
                 items(data.relatedVideos) {
-                    VideoCardTextNextToPreview(it) {
-//                        video = it
+                    VideoCardTextNextToPreview(it) { relatedVideo ->
+                        val newData = data.copy(video = it, relatedVideos = data.relatedVideos + data.video - relatedVideo)
+                        val destination = Destination.VideoPlayer
+                        destination.data = newData
+                        platform.navigationStack.push(destination)
                     }
                     Divider(Modifier.background(Color.Black))
                 }

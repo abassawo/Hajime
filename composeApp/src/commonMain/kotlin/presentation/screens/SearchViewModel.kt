@@ -11,7 +11,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import utils.CommonPlatform
 import utils.Platform
 
 sealed class VideoSetViewState {
@@ -22,7 +21,7 @@ sealed class VideoSetViewState {
 
 
 class SearchViewModel(
-    val platform: Platform = CommonPlatform(),
+    val platform: Platform,
     val tags: List<String> = listOf("armbar", "triangle", "guillotine", "ezquiel") // Currently being used to serve test data, could be potentially a memory cahe in future
 ) {
 //    var selectedTopic: String = tags.first()
