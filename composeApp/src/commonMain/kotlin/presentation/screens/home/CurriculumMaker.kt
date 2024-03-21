@@ -21,7 +21,7 @@ class CurriculumMaker {
         listOf("Seoi nage", "Tomoe nage", "Bahiana", "Kata Guruma", "Uchi mata")
 
     val blackBeltCurriculum: List<CurriculumModel> =
-        listOf("Berimbolo, Rolamentos", "Jiujitsu Roll", "Classical standup")
+        listOf("Berimbolo", "Jiujitsu Roll", "Classical standup")
 
 
     fun makeCurriculum(): Map<BeltLevel, List<CurriculumModel>> {

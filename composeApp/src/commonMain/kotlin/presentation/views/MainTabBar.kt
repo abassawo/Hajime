@@ -79,7 +79,7 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
                         Icons.Default.Favorite,
                         "",
                         modifier = Modifier.padding(0.dp).clickable {
-//                            searchViewModel.onShareClicked(it)
+
                         })
                 }
 

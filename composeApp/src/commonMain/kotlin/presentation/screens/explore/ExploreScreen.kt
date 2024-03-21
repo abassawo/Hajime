@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -23,10 +24,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import data.Video
 import presentation.screens.SearchViewModel
@@ -59,20 +63,31 @@ fun ExploreTopicsScreen(platform: Platform) {
     val curriculum = homeViewModel.learningCurriculum
 
     val allTopics = curriculum.values.toList().flatten()
-
-    LazyVerticalGrid(
-        GridCells.Fixed(2),
-        Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-    ) {
-        items(allTopics) { curriculum ->
-            Card(Modifier.size(100.dp)) {
-                Text(text = curriculum, modifier = Modifier.clickable {
+    Column(Modifier.fillMaxSize()) {
+        LazyVerticalGrid(
+            GridCells.Fixed(2),
+            Modifier.fillMaxSize().padding(bottom = 48.dp)
+        ) {
+            items(allTopics) { curriculum ->
+                val action = {
                     val videoResultsDestination = Destination.VideoResults
                     videoResultsDestination.data = curriculum
                     platform.navigationStack.push(videoResultsDestination)
-                })
+                }
+                Card(Modifier.size(100.dp).padding(16.dp).clickable { action() }) {
+                    Box(Modifier.fillMaxSize().clickable { action() }, contentAlignment = Alignment.Center) {
+                        Text(
+                            text = curriculum,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.wrapContentSize().clickable {
+                                action()
+                            })
+                    }
+                }
             }
         }
+//        Spacer(Modifier.height(16.dp))
     }
 }
 
