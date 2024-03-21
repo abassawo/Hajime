@@ -6,7 +6,7 @@ import data.BeltLevel
 class OnboardingViewModel() {
     var isFirstRun: Boolean = true
     val firstName = mutableStateOf("")
-    val beltLevel = mutableStateOf(BeltLevel.None)
+    val beltLevel = mutableStateOf(BeltLevel.White)
 
     fun submitKyc() {
         // save first name

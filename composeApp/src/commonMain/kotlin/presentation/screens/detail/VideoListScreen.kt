@@ -16,7 +16,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +40,8 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
     }
 
 
+
+
     val playbackUrl = data.video.streamUrl ?: viewModel.streamUrl.value
 //    if (playbackUrl.isNotEmpty()) {
         Column(
@@ -53,6 +54,7 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
                     url = playbackUrl
                 )
             } else {
+                viewModel.prepareVideoPlayback(video)
                 Text("Error occurred")
             }
 
@@ -107,6 +109,23 @@ fun VideoCardTextBelowPreview(video: Video, clickAction: (video: Video) -> Unit)
 
         Column(Modifier.padding(16.dp).clickable { clickAction(video) }) {
             Text(text = video.name ?: "", color = Color.White)
+//            Text(text = video.description ?: "", maxLines = 3, color = Color.White)
+        }
+
+    }
+}
+
+@Composable
+fun VideoCardLoading(video: Video?, modifier: Modifier = Modifier, clickAction: (video: Video) -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AsyncImage(
+            model = video?.pictures?.baseLink,
+            "",
+            modifier.clickable { video?.let { clickAction(video) } }.size(100.dp)
+        )
+
+        Column(Modifier.padding(16.dp).clickable { video?.let { clickAction(video) } }) {
+            Text(text = video?.name ?: "", color = Color.White)
 //            Text(text = video.description ?: "", maxLines = 3, color = Color.White)
         }
 

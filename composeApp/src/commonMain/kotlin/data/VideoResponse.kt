@@ -1,5 +1,6 @@
 package data
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -19,7 +20,13 @@ data class Video(
     val language: String?,
     val height: Int,
     val pictures: Pictures,
-    val content_rating: List<String>
+    val privacy: Privacy?,
+    val content_rating: List<String>,
+//    val embed: String,
+    @SerialName("player_embed_url") val playerEmbedUrl: String
 ) {
     var streamUrl: String? = null
 }
+
+@Serializable
+data class Privacy(val view: String, val download: Boolean)

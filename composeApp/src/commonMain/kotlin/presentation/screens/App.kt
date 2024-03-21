@@ -11,6 +11,7 @@ import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ import utils.navigation.NavigationStack
 
 @Preview
 @Composable
-fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel()) {
+fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel(), isFirstRun: Boolean = onboardingViewModel.isFirstRun) {
     val navigationStack = rememberSaveable(
         saver = listSaver(
             restore = { NavigationStack(*it.toTypedArray()) },
@@ -42,7 +43,7 @@ fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel()) {
     ) {
         NavigationStack(Destination.Home)
     }
-    if (onboardingViewModel.isFirstRun) {
+    if (isFirstRun) {
         onboardingViewModel.isFirstRun = false
         OnboardingFlow(onboardingViewModel)
     } else {
@@ -52,7 +53,8 @@ fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel()) {
 
 @Composable
 fun AppScaffold(platform: Platform) {
-    val navigationStack = platform.navigationStack
+    val navigationStack = remember { platform.navigationStack }
+    
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(navigationStack)

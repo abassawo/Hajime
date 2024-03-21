@@ -9,7 +9,7 @@ class CurriculumMaker {
         listOf("Jiujitsu History")
 
     val whiteBeltCurriculum: List<CurriculumModel> =
-        listOf("Hip escape, Rolamentos", "Americana", "Jiujitsu Roll", "Classical standup", "Triangle")
+        listOf("Omoplata", "Hip escape", "Armbar", "Rolamentos", "Americana", "Jiujitsu Roll", "Classical standup", "Triangle")
 
     val blueBeltCurriculum: List<CurriculumModel> =
         listOf("Side control", "Jiujitsu sweeps", "Knee on Belly", "Passing the guard", "Omoplata")
@@ -33,7 +33,6 @@ class CurriculumMaker {
                     BeltLevel.Purple -> purpleBeltCurriculum
                     BeltLevel.Brown -> brownBeltCurriculum
                     BeltLevel.Black -> blackBeltCurriculum
-                    BeltLevel.None -> noBeltCurriculum
                 }
                 put(belt, curriculum)
             }

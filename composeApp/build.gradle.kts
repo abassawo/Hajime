@@ -50,7 +50,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.0")
+            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.2")
             implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha03")
             implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha03")
             implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
@@ -59,6 +59,8 @@ kotlin {
             implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
             implementation("io.ktor:ktor-client-auth:$ktorVersion")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+            implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

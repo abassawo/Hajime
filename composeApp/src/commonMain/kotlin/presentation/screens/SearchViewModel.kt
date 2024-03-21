@@ -5,10 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import data.Video
 import data.VideoStreamResponse
 import data.VimeoRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import utils.Platform
@@ -30,11 +26,8 @@ class SearchViewModel(
     val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
     val mutableStateFlow: MutableStateFlow<VideoSetViewState> =
         MutableStateFlow(VideoSetViewState.Loading)
-
+    val coroutineScope = platform.coroutineScope
     val streamUrl: MutableState<String> = mutableStateOf("")
-    val coroutineScope: CoroutineScope = CoroutineScope(
-        Dispatchers.IO + SupervisorJob()
-    )
     val allVideos: MutableSet<Video> = mutableSetOf()
     var iterator = tags.iterator()
 
@@ -61,7 +54,7 @@ class SearchViewModel(
     fun fetchChannel(channelName: String) {
         mutableStateFlow.value = VideoSetViewState.Loading
         coroutineScope.launch {
-            runCatching { vimeoService.getVideos(channelName) }
+            runCatching { vimeoService.getVideosForChannel(channelName) }
                 .mapCatching { it }
                 .onSuccess {
                     mutableStateFlow.value = VideoSetViewState.Content(it.data)

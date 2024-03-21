@@ -18,7 +18,7 @@ enum class Destination(var data: Any? = null) {
 @Composable
 fun BottomBarItem(destination: Destination, clickAction: (destination: Destination) -> Unit) {
     val icon = when(destination) {
-        Destination.Home -> Icons.Default.PlayArrow
+        Destination.Home -> Icons.Default.Home
         Destination.Explore -> Icons.Default.Search
         Destination.Community -> Icons.Default.Place
         Destination.Favorites -> Icons.Default.Favorite

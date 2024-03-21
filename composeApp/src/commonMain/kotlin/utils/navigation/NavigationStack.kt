@@ -27,8 +27,8 @@ class NavigationStack<T>(vararg initial: T) {
     }
     
     fun lastWithIndex(): IndexedValue<T> = stack.withIndex().last()
-    fun backUntil(destination: T) {
-        while(lastWithIndex().value != destination) {
+    fun backUntil(vararg destination: T) {
+        while(destination.contains(lastWithIndex().value).not()) {
             back()
         }
     }

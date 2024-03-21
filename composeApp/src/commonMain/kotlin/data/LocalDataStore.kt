@@ -9,7 +9,7 @@ class LocalDataStore constructor(val resourceReader: ResourceReader = ResourceRe
         TODO("Not yet implemented")
     }
 
-    override suspend fun getVideos(channel: String): VideoCollection {
+    override suspend fun getVideosForChannel(channel: String): VideoCollection {
         TODO("Not yet implemented")
     }
 

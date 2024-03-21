@@ -9,6 +9,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import platform.AVFoundation.AVPlayer
 import platform.AVFoundation.AVPlayerLayer
 import platform.AVFoundation.play
+import platform.AVFoundation.volume
 import platform.AVKit.AVPlayerViewController
 import platform.CoreGraphics.CGRect
 import platform.Foundation.NSURL
@@ -22,6 +23,7 @@ actual fun VideoPlayer(modifier: Modifier, url: String) {
     val player = remember { AVPlayer(uRL = NSURL.URLWithString(url)!!) }
     val playerLayer = remember { AVPlayerLayer() }
     val avPlayerViewController = remember { AVPlayerViewController() }
+    player.volume = 1.0f
     avPlayerViewController.player = player
     avPlayerViewController.showsPlaybackControls = true
 

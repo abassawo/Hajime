@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
@@ -19,6 +20,7 @@ class VimeoRepository : VimeoService {
     @OptIn(ExperimentalSerializationApi::class)
     private val client: HttpClient =
         HttpClient {
+            install(HttpCache)
             install(Auth) {
                 bearer {
                     sendWithoutRequest {
@@ -48,7 +50,7 @@ class VimeoRepository : VimeoService {
         }
     }
 
-    override suspend fun getVideos(channel: String): VideoCollection {
+    override suspend fun getVideosForChannel(channel: String): VideoCollection {
         val url = "https://api.vimeo.com/channels/$channel/videos"
         val query = URLBuilder(url).buildString()
         return client.get(query).body()
@@ -70,6 +72,6 @@ class VimeoRepository : VimeoService {
 
 
     companion object {
-        const val token = "bearer 8de06948a1a1c142577c0df515c14f9f"
+        const val token = "bearer 8f7b583cee012448ff7b6eb9485a667c"
     }
 }

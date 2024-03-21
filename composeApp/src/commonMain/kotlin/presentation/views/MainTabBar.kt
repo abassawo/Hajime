@@ -2,15 +2,18 @@ package presentation.views
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +23,7 @@ import data.Video
 import hajime.composeapp.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import presentation.screens.detail.VideoPlayerData
 import utils.navigation.NavigationStack
 
 
@@ -27,11 +31,12 @@ import utils.navigation.NavigationStack
 @Composable
 fun MainTopBar(navigationStack: NavigationStack<Destination>) {
     val hasBackIcon = navigationStack.lastWithIndex().value.name.startsWith("Video")
-    val video = navigationStack.lastWithIndex().value.data as? Video?
+    val video = (navigationStack.lastWithIndex().value.data as? VideoPlayerData)?.video
+
 
     val backAction = {
         if (hasBackIcon) {
-            navigationStack.backUntil(Destination.VideoResults)
+            navigationStack.backUntil(Destination.VideoResults, Destination.Home)
         } else {
             navigationStack.back()
         }
@@ -65,6 +70,13 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
                 video?.let {
                     Icon(
                         Icons.Default.Share,
+                        "",
+                        modifier = Modifier.padding(0.dp).clickable {
+//                            searchViewModel.onShareClicked(it)
+                        })
+                    Spacer(Modifier.width(8.dp))
+                    Icon(
+                        Icons.Default.Favorite,
                         "",
                         modifier = Modifier.padding(0.dp).clickable {
 //                            searchViewModel.onShareClicked(it)
