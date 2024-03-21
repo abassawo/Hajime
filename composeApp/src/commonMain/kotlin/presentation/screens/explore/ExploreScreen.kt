@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -146,8 +147,12 @@ fun VideoResultsGrid(
             }
         }
 
-        is VideoSetViewState.Error -> Text("Error")
-        VideoSetViewState.Loading -> Text("Loading")
+        is VideoSetViewState.Error -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error")
+        }
+        VideoSetViewState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(Modifier.size(16.dp))
+        }
     }
 }
 
