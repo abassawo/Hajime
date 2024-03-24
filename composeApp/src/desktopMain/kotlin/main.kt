@@ -1,3 +1,5 @@
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import data.ChannelsResponse
@@ -9,35 +11,20 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import presentation.screens.VideoSetViewState
 import presentation.screens.App
+import presentation.views.Destination
 import utils.CommonPlatform
+import utils.navigation.NavigationStack
 
-fun main() = application {
+fun  main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Hajime") {
-        App(isFirstRun = false)
-    }
-}
-
-class StaffPickViewModelImpl(val vimeoService: VimeoService = VimeoRepository()) {
-    val mutableStateFlow : MutableStateFlow<VideoSetViewState> = MutableStateFlow(
-        VideoSetViewState.Loading)
-    val coroutineScope: CoroutineScope = CoroutineScope(
-        Dispatchers.IO + SupervisorJob()
-    )
-     val path: String
-        get() =  "staffpicks"
-
-//     fun fetchChannel(channelName: String) {
-//        mutableStateFlow.value = VideoSetViewState.Loading
-//        coroutineScope.launch {
-//            runCatching { vimeoService.getVideos(channelName) }
-//                .mapCatching { it }
-//                .onSuccess { mutableStateFlow.value = VideoSetViewState.Content(it) }
-//                .onFailure { mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it") }
-//        }
-//    }
-
-    private suspend fun getVideoFeed(): ChannelsResponse {
-        // could be used to find other channels
-        return vimeoService.getChannels()
+        val navigationStack = rememberSaveable(
+            saver = listSaver(
+                restore = { NavigationStack(*it.toTypedArray()) },
+                save = { it.stack },
+                )
+        ) {
+            NavigationStack(Destination.Home)
+        }
+        App(CommonPlatform(navigationStack, coroutineScope = CoroutineScope(Dispatchers.Main)))
     }
 }

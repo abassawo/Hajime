@@ -28,11 +28,11 @@ class CurriculumMaker {
         return buildMap {
             BeltLevel.entries.forEach { belt ->
                 val curriculum = when (belt) {
-                    BeltLevel.White -> whiteBeltCurriculum
-                    BeltLevel.Blue -> blueBeltCurriculum
-                    BeltLevel.Purple -> purpleBeltCurriculum
-                    BeltLevel.Brown -> brownBeltCurriculum
-                    BeltLevel.Black -> blackBeltCurriculum
+                    is BeltLevel.White -> whiteBeltCurriculum
+                    is BeltLevel.Blue -> blueBeltCurriculum
+                    is BeltLevel.Purple -> purpleBeltCurriculum
+                    is BeltLevel.Brown -> brownBeltCurriculum
+                    is BeltLevel.Black -> blackBeltCurriculum
                 }
                 put(belt, curriculum)
             }

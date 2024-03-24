@@ -4,7 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import data.Video
 import data.VideoStreamResponse
-import data.VimeoRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import utils.Platform
@@ -16,59 +17,17 @@ sealed class VideoSetViewState {
 }
 
 
-class SearchViewModel(
-    val platform: Platform,
-    val tags: List<String> = listOf("armbar", "triangle", "guillotine", "ezquiel") // Currently being used to serve test data, could be potentially a memory cahe in future
-) {
-//    var selectedTopic: String = tags.first()
+class SearchViewModel(val platform: Platform) {
     var selectedVideo: Video? = null
-    val isLocalDataEnabled: Boolean = false // todo - use a feature flag
-    val vimeoService = if (isLocalDataEnabled) platform.localAppDataSource else VimeoRepository()
+    val vimeoService = platform.appDataSource
     val mutableStateFlow: MutableStateFlow<VideoSetViewState> =
         MutableStateFlow(VideoSetViewState.Loading)
     val coroutineScope = platform.coroutineScope
     val streamUrl: MutableState<String> = mutableStateOf("")
     val allVideos: MutableSet<Video> = mutableSetOf()
-    var iterator = tags.iterator()
-
-
-    fun refresh(topic: String) {
-        coroutineScope.launch {
-            // todo - paginate
-            val videos = getVideos(topic)
-            allVideos.addAll(videos)
-            mutableStateFlow.value = VideoSetViewState.Content(allVideos.toList())
-        }
-//        if (iterator.hasNext()) {
-//            val nextTag = iterator.next()
-//            coroutineScope.launch {
-//                val videos = getVideos(nextTag)
-//                allVideos.addAll(videos)
-//                mutableStateFlow.value = VideoSetViewState.Content(allVideos)
-//            }
-//        } else {
-//            iterator = tags.iterator()
-//        }
-    }
-
-    fun fetchChannel(channelName: String) {
-        mutableStateFlow.value = VideoSetViewState.Loading
-        coroutineScope.launch {
-            runCatching { vimeoService.getVideosForChannel(channelName) }
-                .mapCatching { it }
-                .onSuccess {
-                    mutableStateFlow.value = VideoSetViewState.Content(it.data)
-                    allVideos.addAll(it.data)
-                }
-                .onFailure {
-                    mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
-                }
-        }
-    }
-
     fun fetchVideos(tag: String) {
         mutableStateFlow.value = VideoSetViewState.Loading
-        coroutineScope.launch {
+        coroutineScope.launch(context = Dispatchers.IO) {
             runCatching {
                 vimeoService.searchVideos(tag)
             }
@@ -79,22 +38,6 @@ class SearchViewModel(
                 .onFailure {
                     mutableStateFlow.value = VideoSetViewState.Error("An error occurred $it")
                 }
-        }
-    }
-
-    private suspend fun getVideos(vararg tags: String): List<Video> {
-        return buildList<Video> {
-            tags.forEach {
-                val result = vimeoService.searchVideos(it).data
-                result.map { video ->
-                    val id = video.uri?.replace("[^0-9]".toRegex(), "")
-                    val restUrl = "https://player.vimeo.com/video/$id/config"
-                    val mediaResponse = streamVideoFromUrl(restUrl)
-                    video.streamUrl =  mediaResponse
-                        .request?.files?.progressive?.firstOrNull()?.url ?: ""
-                }
-                addAll(result)
-            }
         }
     }
 
@@ -122,5 +65,4 @@ class SearchViewModel(
     fun onShareClicked(it: Video) {
         // emit view event for sharing the video
     }
-
 }

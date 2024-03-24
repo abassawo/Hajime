@@ -30,6 +30,7 @@ import utils.navigation.NavigationStack
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun MainTopBar(navigationStack: NavigationStack<Destination>) {
+    val canShowTopbar = navigationStack.lastWithIndex().value.canShowTopBar()
     val hasBackIcon = navigationStack.lastWithIndex().value.name.startsWith("Video")
     val video = (navigationStack.lastWithIndex().value.data as? VideoPlayerData)?.video
 
@@ -42,51 +43,52 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
         }
     }
     val backArrowResource = Icons.Default.ArrowBack
-    TopAppBar(
-        title = {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("Hajime", Modifier.fillMaxWidth())
-            }
+    if(canShowTopbar) {
+        TopAppBar(
+            title = {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("Hajime", Modifier.fillMaxWidth())
+                }
 
-        },
-        navigationIcon = {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            },
+            navigationIcon = {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    if (hasBackIcon) {
+                        Icon(
+                            backArrowResource,
+                            "",
+                            modifier = Modifier.padding(0.dp).clickable { backAction() })
+                    } else {
+                        Icon(
+                            painter = painterResource(Res.drawable.compose_multiplatform),
+                            "",
+                            modifier = Modifier.padding(0.dp)
+                                .size(32.dp)
+                        )
+                    }
+                }
+            }, actions = {
                 if (hasBackIcon) {
-                    Icon(
-                        backArrowResource,
-                        "",
-                        modifier = Modifier.padding(0.dp).clickable { backAction() })
-                } else {
-                    Icon(
-                        painter = painterResource(Res.drawable.compose_multiplatform),
-                        "",
-                        modifier = Modifier.padding(0.dp)
-                            .size(32.dp)
-                    )
-                }
-            }
-        }, actions = {
-            if (hasBackIcon) {
-                video?.let {
-                    Icon(
-                        Icons.Default.Share,
-                        "",
-                        modifier = Modifier.padding(0.dp).clickable {
+                    video?.let {
+                        Icon(
+                            Icons.Default.Share,
+                            "",
+                            modifier = Modifier.padding(0.dp).clickable {
 //                            searchViewModel.onShareClicked(it)
-                        })
-                    Spacer(Modifier.width(8.dp))
-                    Icon(
-                        Icons.Default.Favorite,
-                        "",
-                        modifier = Modifier.padding(0.dp).clickable {
+                            })
+                        Spacer(Modifier.width(8.dp))
+                        Icon(
+                            Icons.Default.Favorite,
+                            "",
+                            modifier = Modifier.padding(0.dp).clickable {
 
-                        })
+                            })
+                    }
+
                 }
-
             }
-        }
-    )
+        )
+    }
 }
 
-
-
+private fun Destination.canShowTopBar() = this != Destination.Kyc

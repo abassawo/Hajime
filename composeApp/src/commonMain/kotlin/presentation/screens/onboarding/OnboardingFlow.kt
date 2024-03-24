@@ -1,7 +1,6 @@
 package presentation.screens.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,45 +18,57 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import data.BeltLevel
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.App
 import presentation.views.Destination
-import utils.navigation.NavigationStack
+import utils.Platform
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 @Preview
-fun OnboardingFlow(onboardingViewModel: OnboardingViewModel) {
+fun OnboardingFlow(platform: Platform, onFinishKyc: () -> Unit) {
+    platform.onboardingViewModel.isFirstRun = false
+
     val pageCount = 2
     val pagerState = rememberPagerState(
-        initialPage = 0) {
+        initialPage = 0
+    ) {
         pageCount
     }
+    val coroutineScope = rememberCoroutineScope()
+
     HorizontalPager(state = pagerState) {
-        when(it) {
-            0 ->  Box(Modifier.background(Color.Black).fillMaxSize(), contentAlignment = Alignment.Center) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "Welcome to Hajime", color = Color.White)
-                    Text(text = "Continue swiping to complete the onboarding", color = Color.White)
+        when (it) {
+            0 -> OnboardingPage1 {
+                coroutineScope.launch {
+                    pagerState.scrollToPage(1)
                 }
             }
-            else -> EnterNameAndRankScreen(onboardingViewModel)
+            else -> OnboardingPage2(platform) {
+                onFinishKyc()
             }
         }
     }
+}
+
+@Composable
+fun OnboardingPage2(platform: Platform, nextAction: () -> Unit) {
+    EnterNameAndRankScreen(platform) {
+        nextAction()
+    }
+}
 
 
 @Composable
-fun EnterNameAndRankScreen(onboardingViewModel: OnboardingViewModel) {
+fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
     val viewModel = remember { OnboardingViewModel() }
-    var isKycComplete = remember { mutableStateOf(false) }
-
-    if(isKycComplete.value) {
-        App(onboardingViewModel)
+    val isKycComplete = mutableStateOf(viewModel.isKycComplete())
+    if (isKycComplete.value) {
+        App(platform)
     } else {
         Box(Modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
@@ -72,14 +83,20 @@ fun EnterNameAndRankScreen(onboardingViewModel: OnboardingViewModel) {
                     columns = StaggeredGridCells.Fixed(2),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(BeltLevel.entries.toTypedArray()) {
+                    items(BeltLevel.entries) {
                         Text(text = it.name, modifier = Modifier.clickable {
                             viewModel.beltLevel.value = it
                         })
                     }
                 }
 
-                Button(onClick = { isKycComplete.value = true }, modifier = Modifier.wrapContentSize()) {
+                Button(
+                    onClick = {
+                        action()
+                        isKycComplete.value = true
+                    },
+                    modifier = Modifier.wrapContentSize().clickable { action() }
+                ) {
                     Text("Submit")
                 }
             }

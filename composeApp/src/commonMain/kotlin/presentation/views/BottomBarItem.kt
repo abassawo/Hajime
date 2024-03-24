@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 enum class Destination(var data: Any? = null) {
-    Home, Explore, Favorites, Community, Profile, VideoResults, VideoPlayer
+    Home, Explore, Favorites, Community, Profile, VideoResults, VideoPlayer, Kyc
 }
 
 

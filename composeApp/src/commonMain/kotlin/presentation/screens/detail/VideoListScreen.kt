@@ -55,7 +55,7 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
                 )
             } else {
                 viewModel.prepareVideoPlayback(video)
-                Text("Error occurred")
+//                Text("Error occurred")
             }
 
             Text(

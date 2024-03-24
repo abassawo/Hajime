@@ -2,18 +2,13 @@ package presentation.screens
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.BottomAppBar
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.detail.VideoPlayerData
@@ -24,68 +19,44 @@ import presentation.screens.explore.verticalGradient
 import presentation.screens.home.HomeScreen
 import presentation.screens.onboarding.OnboardingFlow
 import presentation.screens.onboarding.OnboardingViewModel
-import presentation.views.BottomBarItem
+import presentation.views.BottomAppBarImpl
 import presentation.views.Destination
 import presentation.views.MainTopBar
-import utils.CommonPlatform
 import utils.Platform
-import utils.navigation.NavigationStack
-
 
 @Preview
 @Composable
-fun App(onboardingViewModel: OnboardingViewModel = OnboardingViewModel(), isFirstRun: Boolean = onboardingViewModel.isFirstRun) {
-    val navigationStack = rememberSaveable(
-        saver = listSaver(
-            restore = { NavigationStack(*it.toTypedArray()) },
-            save = { it.stack },
-        )
-    ) {
-        NavigationStack(Destination.Home)
-    }
-    if (isFirstRun) {
-        onboardingViewModel.isFirstRun = false
-        OnboardingFlow(onboardingViewModel)
-    } else {
-        AppScaffold(CommonPlatform(navigationStack))
+fun App(platform: Platform) {
+    AppScaffold(platform)
+
+    LaunchedEffect(Unit) {
+        val onboardingViewModel: OnboardingViewModel = platform.onboardingViewModel
+        if (onboardingViewModel.isKycComplete().not()) {
+            platform.navigationStack.push(Destination.Kyc)
+        }
     }
 }
 
 @Composable
 fun AppScaffold(platform: Platform) {
     val navigationStack = remember { platform.navigationStack }
-    
+
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(navigationStack)
         },
         bottomBar = {
-            if (navigationStack.lastWithIndex().value != Destination.VideoPlayer) {
-                BottomAppBar {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val destinations =
-                            listOf(
-                                Destination.Home,
-                                Destination.Explore,
-                                Destination.Favorites,
-                                Destination.Community,
-                                Destination.Profile
-                            )
-                        destinations.forEach {
-                            BottomBarItem(it) { destination ->
-                                navigationStack.push(destination)
-                            }
-                        }
-                    }
-                }
-            }
+           BottomAppBarImpl(navigationStack)
         }) {
         Box(Modifier.fillMaxSize().background(verticalGradient)) {
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
+                    Destination.Kyc -> {
+                        OnboardingFlow(platform) {
+                            platform.onboardingViewModel.submitKyc()
+                            platform.navigationStack.push(Destination.Home)
+                        }
+                    }
                     Destination.Explore -> {
                         ExploreTopicsScreen(platform)
                     }
@@ -111,12 +82,6 @@ fun AppScaffold(platform: Platform) {
                     Destination.VideoResults -> VideoResultsGrid(
                         page.data as? String ?: "",
                         platform
-//                        {
-//                            searchViewModel.prepareVideoPlayback(it)
-//                            val destination = Destination.VideoPlayer
-//                            destination.data = VideoPlayerData(it, searchViewModel.allVideos.toList())
-//                            navigationStack.push(destination)
-//                        }
                     )
                 }
             }

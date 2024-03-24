@@ -20,7 +20,7 @@ fun CurriculumCard(userLevel: BeltLevel, entry: Map.Entry<BeltLevel, List<Curric
     val beltLevel = entry.key
     Card(Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp)) {
         val textColor = when(beltLevel) {
-           BeltLevel.White -> Color.Black
+           is BeltLevel.White -> Color.Black
            else -> Color.White
         }
         Box(Modifier.fillMaxSize().background(beltLevel.color), contentAlignment = Alignment.Center) {
