@@ -23,6 +23,7 @@ import presentation.screens.onboarding.OnboardingViewModel
 import presentation.views.BottomAppBarImpl
 import presentation.views.Destination
 import presentation.views.MainTopBar
+import presentation.views.MapView
 import utils.CommonPlatform
 import utils.Platform
 import utils.navigation.NavigationStack
@@ -70,9 +71,7 @@ fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination
                         ExploreTopicsScreen(platform, navigationStack)
                     }
 
-                    Destination.Community -> Text(
-                        "Community", Modifier.fillMaxSize()
-                    )
+                    Destination.Community -> MapView()
 
                     Destination.Profile -> Text(
                         "Account"

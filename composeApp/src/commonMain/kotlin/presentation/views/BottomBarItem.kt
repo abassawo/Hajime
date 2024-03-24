@@ -19,10 +19,9 @@ enum class Destination(var data: Any? = null) {
 fun BottomBarItem(destination: Destination, clickAction: (destination: Destination) -> Unit) {
     val icon = when(destination) {
         Destination.Home -> Icons.Default.Home
-        Destination.Explore -> Icons.Default.Search
+        Destination.Explore -> Icons.Default.PlayArrow
         Destination.Community -> Icons.Default.Place
         Destination.Favorites -> Icons.Default.Favorite
-        Destination.Profile -> Icons.Default.AccountCircle
         else -> Icons.Default.Home
     }
     Icon(icon, "", modifier = Modifier.padding(horizontal = 16.dp).clickable { clickAction(destination) })

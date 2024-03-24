@@ -11,6 +11,12 @@
         android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value=""/>
+        <!--        Change this value to ${MAPS_API_KEY} after updating local.properties-->
+
+
 
         <activity
             android:exported="true"

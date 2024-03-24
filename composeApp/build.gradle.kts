@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("kotlinx-serialization")
+//    id("com.google.firebase.appdistribution").apply(false)
 }
 
 kotlin {
@@ -60,8 +61,13 @@ kotlin {
             implementation("io.ktor:ktor-client-auth:$ktorVersion")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-//            implementation("androidx.datastore:datastore-preferences-core:1.0.0")
+            implementation(libs.maps.compose)
 
+//            // Google maps for Android
+//            implementation(libs.google.play.services.android.location)
+//            api(libs.google.play.services.android.maps)  // api means its exposed to the pure-android app (for init)
+//            // Google maps for Compose for Android
+//            implementation(libs.google.maps.android.compose)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

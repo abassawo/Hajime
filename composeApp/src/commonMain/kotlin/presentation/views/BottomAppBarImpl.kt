@@ -22,8 +22,7 @@ fun BottomAppBarImpl(navigationStack: NavigationStack<Destination>) {
                         Destination.Home,
                         Destination.Explore,
                         Destination.Favorites,
-                        Destination.Community,
-                        Destination.Profile
+                        Destination.Community
                     )
                 destinations.forEach {
                     BottomBarItem(it) { destination ->
