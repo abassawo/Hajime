@@ -25,9 +25,10 @@ import presentation.views.CurriculumCard
 import presentation.views.Destination
 import utils.DateTimeUtil
 import utils.Platform
+import utils.navigation.NavigationStack
 
 @Composable
-fun HomeScreen(platform: Platform) {
+fun HomeScreen(platform: Platform, navigationStack: NavigationStack<Destination>) {
     val homeViewModel = platform.homeViewModel
     val curriculum = homeViewModel.learningCurriculum
     val currentBeltLevel = BeltLevel.White() // todo - retrieve this from KYC data
@@ -58,7 +59,7 @@ fun HomeScreen(platform: Platform) {
                             val destination = Destination.VideoPlayer
                             //                            searchViewModel.prepareVideoPlayback(it)
                             destination.data = VideoPlayerData(it, value.relatedVideos - it)
-                            platform.navigationStack.push(Destination.VideoPlayer)
+                            navigationStack.push(Destination.VideoPlayer)
                         }
                     }
                     is HomeViewState.Loading -> CircularProgressIndicator(Modifier.size(16.dp))

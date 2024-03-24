@@ -13,6 +13,7 @@ import presentation.screens.onboarding.OnboardingViewModel
 import presentation.views.Destination
 import utils.navigation.NavigationStack
 
+
 interface Platform {
 
     var isMockDataEnabled: Boolean
@@ -23,10 +24,10 @@ interface Platform {
     val onboardingViewModel: OnboardingViewModel
     val searchViewModel: SearchViewModel
     val homeViewModel: HomeViewModel
-    val navigationStack: NavigationStack<Destination>
+//    val navigationStack: NavigationStack<Destination>
 }
 
-class CommonPlatform(override val navigationStack: NavigationStack<Destination>,
+class CommonPlatform(
                      override val coroutineScope: CoroutineScope = CoroutineScope(
                          Dispatchers.IO + SupervisorJob()
                      ),

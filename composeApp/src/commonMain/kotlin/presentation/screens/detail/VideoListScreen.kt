@@ -27,11 +27,12 @@ import data.Video
 import presentation.views.Destination
 import presentation.views.VideoPlayer
 import utils.Platform
+import utils.navigation.NavigationStack
 
 data class VideoPlayerData(val video: Video, val relatedVideos: List<Video>)
 
 @Composable
-fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
+fun VideoPlayerScreen(platform: Platform, navigationStack: NavigationStack<Destination>, data: VideoPlayerData) {
     val viewModel = remember { platform.searchViewModel }
 
     var video = data.video
@@ -76,7 +77,7 @@ fun VideoPlayerScreen(platform: Platform, data: VideoPlayerData) {
                         val newData = data.copy(video = it, relatedVideos = data.relatedVideos + data.video - relatedVideo)
                         val destination = Destination.VideoPlayer
                         destination.data = newData
-                        platform.navigationStack.push(destination)
+                        navigationStack.push(destination)
                     }
                     Divider(Modifier.background(Color.Black))
                 }

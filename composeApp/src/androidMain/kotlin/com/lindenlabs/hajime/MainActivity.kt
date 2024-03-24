@@ -18,15 +18,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navigationStack = rememberSaveable(
-                saver = listSaver(
-                    restore = { NavigationStack(*it.toTypedArray()) },
-                    save = { it.stack },
-                )
-            ) {
-                NavigationStack(Destination.Home)
-            }
-            App(CommonPlatform(navigationStack))
+            App()
         }
     }
 }
@@ -43,5 +35,5 @@ fun AppAndroidPreview() {
     ) {
         NavigationStack(Destination.Home)
     }
-    App(CommonPlatform(navigationStack))
+    App(navigationStack)
 }

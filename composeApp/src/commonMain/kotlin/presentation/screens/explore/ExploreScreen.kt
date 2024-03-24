@@ -59,7 +59,7 @@ val verticalGradient = Brush.verticalGradient(
 data class ExploreScreenPayload(val topic: String, val video: Video, val allVideos: List<Video>)
 
 @Composable
-fun ExploreTopicsScreen(platform: Platform) {
+fun ExploreTopicsScreen(platform: Platform, navigationStack: NavigationStack<Destination>) {
     val homeViewModel = HomeViewModel(platform)
     val curriculum = homeViewModel.learningCurriculum
 
@@ -73,7 +73,7 @@ fun ExploreTopicsScreen(platform: Platform) {
                 val action = {
                     val videoResultsDestination = Destination.VideoResults
                     videoResultsDestination.data = curriculum
-                    platform.navigationStack.push(videoResultsDestination)
+                    navigationStack.push(videoResultsDestination)
                 }
                 Card(Modifier.size(100.dp).padding(16.dp).clickable { action() }) {
                     Box(Modifier.fillMaxSize().clickable { action() }, contentAlignment = Alignment.Center) {
@@ -97,7 +97,7 @@ fun ExploreTopicsScreen(platform: Platform) {
 fun VideoResultsGrid(
     topic: String,
     platform: Platform,
-    navigationStack: NavigationStack<Destination> = platform.navigationStack
+    navigationStack: NavigationStack<Destination>
 ) {
     val viewModel = remember { SearchViewModel(platform) }
     LaunchedEffect(topic) {

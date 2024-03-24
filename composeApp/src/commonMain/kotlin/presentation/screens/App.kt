@@ -8,7 +8,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screens.detail.VideoPlayerData
@@ -22,25 +23,33 @@ import presentation.screens.onboarding.OnboardingViewModel
 import presentation.views.BottomAppBarImpl
 import presentation.views.Destination
 import presentation.views.MainTopBar
+import utils.CommonPlatform
 import utils.Platform
+import utils.navigation.NavigationStack
 
 @Preview
 @Composable
-fun App(platform: Platform) {
-    AppScaffold(platform)
+fun App(platform: Platform = CommonPlatform()) {
+    val navigationStack = rememberSaveable(
+        saver = listSaver(
+            restore = { NavigationStack(*it.toTypedArray()) },
+            save = { it.stack },
+            )
+    ) {
+        NavigationStack(Destination.Home)
+    }
+    AppScaffold(platform, navigationStack)
 
     LaunchedEffect(Unit) {
         val onboardingViewModel: OnboardingViewModel = platform.onboardingViewModel
         if (onboardingViewModel.isKycComplete().not()) {
-            platform.navigationStack.push(Destination.Kyc)
+            navigationStack.push(Destination.Kyc)
         }
     }
 }
 
 @Composable
-fun AppScaffold(platform: Platform) {
-    val navigationStack = remember { platform.navigationStack }
-
+fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination>) {
     Scaffold(Modifier.fillMaxSize(),
         topBar = {
             MainTopBar(navigationStack)
@@ -54,11 +63,11 @@ fun AppScaffold(platform: Platform) {
                     Destination.Kyc -> {
                         OnboardingFlow(platform) {
                             platform.onboardingViewModel.submitKyc()
-                            platform.navigationStack.push(Destination.Home)
+                            navigationStack.push(Destination.Home)
                         }
                     }
                     Destination.Explore -> {
-                        ExploreTopicsScreen(platform)
+                        ExploreTopicsScreen(platform, navigationStack)
                     }
 
                     Destination.Community -> Text(
@@ -71,17 +80,19 @@ fun AppScaffold(platform: Platform) {
 
                     Destination.VideoPlayer -> VideoPlayerScreen(
                         platform,
+                        navigationStack,
                         page.data as VideoPlayerData
                     )
 
-                    Destination.Home -> HomeScreen(platform)
+                    Destination.Home -> HomeScreen(platform, navigationStack)
                     Destination.Favorites -> Text(
                         "Inbox"
                     )
 
                     Destination.VideoResults -> VideoResultsGrid(
                         page.data as? String ?: "",
-                        platform
+                        platform,
+                        navigationStack
                     )
                 }
             }
