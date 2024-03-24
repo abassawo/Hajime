@@ -60,6 +60,7 @@ kotlin {
             implementation("io.ktor:ktor-client-auth:$ktorVersion")
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+//            implementation("androidx.datastore:datastore-preferences-core:1.0.0")
 
         }
         desktopMain.dependencies {

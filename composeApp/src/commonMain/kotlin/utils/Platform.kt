@@ -10,8 +10,6 @@ import kotlinx.coroutines.SupervisorJob
 import presentation.screens.SearchViewModel
 import presentation.screens.home.HomeViewModel
 import presentation.screens.onboarding.OnboardingViewModel
-import presentation.views.Destination
-import utils.navigation.NavigationStack
 
 
 interface Platform {
@@ -33,6 +31,7 @@ class CommonPlatform(
                      ),
                      override var isMockDataEnabled: Boolean = false,
 ) : Platform {
+
     private val localAppDataSource = LocalDataStore(resourceReader = ResourceReader())
 
     override val appDataSource: VimeoService
