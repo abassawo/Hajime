@@ -31,19 +31,29 @@ import utils.navigation.NavigationStack
 @Composable
 fun MainTopBar(navigationStack: NavigationStack<Destination>) {
     val canShowTopbar = navigationStack.lastWithIndex().value.canShowTopBar()
-    val hasBackIcon = navigationStack.lastWithIndex().value.name.startsWith("Video")
+    val hasBackIcon = navigationStack.lastWithIndex().value.hasBackIcon()
     val video = (navigationStack.lastWithIndex().value.data as? VideoPlayerData)?.video
 
 
     val backAction = {
         if (hasBackIcon) {
-            navigationStack.backUntil(Destination.VideoResults, Destination.Home)
+            val destination = when (navigationStack.lastWithIndex().value) {
+                Destination.VideoPlayer -> Destination.VideoResults
+                Destination.DojoLocator -> Destination.Profile
+                else -> null
+            }
+            destination?.let {
+                navigationStack.backUntil(
+                    destination
+                )
+            } ?: navigationStack.back()
+
         } else {
             navigationStack.back()
         }
     }
     val backArrowResource = Icons.Default.ArrowBack
-    if(canShowTopbar) {
+    if (canShowTopbar) {
         TopAppBar(
             title = {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -89,6 +99,10 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
             }
         )
     }
+}
+
+private fun Destination.hasBackIcon(): Boolean {
+    return this == Destination.DojoLocator || this.name.startsWith("Video")
 }
 
 private fun Destination.canShowTopBar() = this != Destination.Kyc

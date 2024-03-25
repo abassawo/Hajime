@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 enum class Destination(var data: Any? = null) {
-    Home, Explore, Favorites, Community, Profile, VideoResults, VideoPlayer, Kyc
+    Home, Explore, Favorites, Profile, VideoResults, VideoPlayer, Kyc, DojoLocator
 }
 
 
@@ -20,7 +20,7 @@ fun BottomBarItem(destination: Destination, clickAction: (destination: Destinati
     val icon = when(destination) {
         Destination.Home -> Icons.Default.Home
         Destination.Explore -> Icons.Default.PlayArrow
-        Destination.Community -> Icons.Default.Place
+        Destination.Profile -> Icons.Default.AccountCircle
         Destination.Favorites -> Icons.Default.Favorite
         else -> Icons.Default.Home
     }

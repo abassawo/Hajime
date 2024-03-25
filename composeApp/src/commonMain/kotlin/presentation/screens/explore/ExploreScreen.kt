@@ -56,8 +56,6 @@ val verticalGradient = Brush.verticalGradient(
     )
 )
 
-data class ExploreScreenPayload(val topic: String, val video: Video, val allVideos: List<Video>)
-
 @Composable
 fun ExploreTopicsScreen(platform: Platform, navigationStack: NavigationStack<Destination>) {
     val homeViewModel = HomeViewModel(platform)

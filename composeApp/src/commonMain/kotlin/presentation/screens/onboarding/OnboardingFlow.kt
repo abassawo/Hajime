@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -13,13 +14,18 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import data.BeltLevel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -72,12 +78,19 @@ fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
     } else {
         Box(Modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
-                TextField(
+                // Name Field
+                OutlinedTextField(
                     value = viewModel.firstName.value,
-                    label = { Text(text = "Enter your first name") },
+                    label = { Text(text = "First name") },
                     onValueChange = {
                         viewModel.firstName.value = it
-                    })
+                    },
+                    leadingIcon = { Icon(imageVector = Icons.Default.Person, contentDescription = null) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
 
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(2),
@@ -93,7 +106,7 @@ fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
                 Button(
                     onClick = {
                         action()
-                        isKycComplete.value = true
+                        viewModel.submitKyc()
                     },
                     modifier = Modifier.wrapContentSize().clickable { action() }
                 ) {

@@ -23,7 +23,8 @@ import platform.darwin.NSObject
 
 
 @Composable
-actual fun MapView() {
+actual fun MapView(
+                   modifier: Modifier) {
     GoogleMaps(Modifier)
 }
 

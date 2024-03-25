@@ -7,9 +7,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.SupervisorJob
+import presentation.screens.ProfileViewModel
 import presentation.screens.SearchViewModel
 import presentation.screens.home.HomeViewModel
 import presentation.screens.onboarding.OnboardingViewModel
+import presentation.screens.saved_videos.FavoritesViewModel
 
 
 interface Platform {
@@ -22,7 +24,8 @@ interface Platform {
     val onboardingViewModel: OnboardingViewModel
     val searchViewModel: SearchViewModel
     val homeViewModel: HomeViewModel
-//    val navigationStack: NavigationStack<Destination>
+    val profileViewModel: ProfileViewModel
+    val favoriteViewModel: FavoritesViewModel
 }
 
 class CommonPlatform(
@@ -43,4 +46,8 @@ class CommonPlatform(
         get() = SearchViewModel(this)
     override val homeViewModel: HomeViewModel
         get() = HomeViewModel(this)
+    override val profileViewModel: ProfileViewModel
+        get() = ProfileViewModel(this)
+    override val favoriteViewModel: FavoritesViewModel
+        get() = FavoritesViewModel(this)
 }
