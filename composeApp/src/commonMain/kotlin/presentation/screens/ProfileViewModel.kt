@@ -19,6 +19,7 @@ class ProfileViewModel(val platform: Platform) {
 
     private val _state = MutableStateFlow(UserProfileState())
     val state: StateFlow<UserProfileState> = _state
+    val appUsageData: String = "5 hours"
 
     init {
         load()

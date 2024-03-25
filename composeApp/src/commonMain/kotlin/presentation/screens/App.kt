@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.ExperimentalMaterialApi
@@ -19,14 +18,12 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -80,7 +77,10 @@ fun AppScaffold(platform: Platform, navigationStack: NavigationStack<Destination
         bottomBar = {
             BottomAppBarImpl(navigationStack)
         }) {
-        Box(Modifier.fillMaxSize().background(verticalGradient)) {
+        Box(
+            Modifier.fillMaxSize()
+                .background(verticalGradient)
+        ) {
             AnimatedContent(targetState = navigationStack.lastWithIndex()) { (_, page) ->
                 when (page) {
                     Destination.Kyc -> {

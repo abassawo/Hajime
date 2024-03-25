@@ -26,13 +26,15 @@ interface Platform {
     val homeViewModel: HomeViewModel
     val profileViewModel: ProfileViewModel
     val favoriteViewModel: FavoritesViewModel
+    val sessionManager: SessionManager
 }
 
 class CommonPlatform(
-                     override val coroutineScope: CoroutineScope = CoroutineScope(
-                         Dispatchers.IO + SupervisorJob()
-                     ),
-                     override var isMockDataEnabled: Boolean = false,
+    override val sessionManager: SessionManager = SessionManager(UserSettings()),
+    override val coroutineScope: CoroutineScope = CoroutineScope(
+        Dispatchers.IO + SupervisorJob()
+    ),
+    override var isMockDataEnabled: Boolean = false,
 ) : Platform {
 
     private val localAppDataSource = LocalDataStore(resourceReader = ResourceReader())

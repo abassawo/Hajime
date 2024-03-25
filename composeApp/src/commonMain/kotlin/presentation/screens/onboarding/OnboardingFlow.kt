@@ -1,6 +1,7 @@
 package presentation.screens.onboarding
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import data.BeltLevel
 import kotlinx.coroutines.launch
@@ -76,7 +78,7 @@ fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
     if (isKycComplete.value) {
         App(platform)
     } else {
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().background(Color.LightGray)) {
             Column(Modifier.fillMaxSize()) {
                 // Name Field
                 OutlinedTextField(

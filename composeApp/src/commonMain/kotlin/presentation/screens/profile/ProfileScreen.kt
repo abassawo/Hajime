@@ -1,10 +1,12 @@
 package presentation.screens.profile
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.TabRow
@@ -21,33 +24,36 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil3.compose.LocalPlatformContext
+import androidx.compose.ui.window.Dialog
 import coil3.compose.rememberAsyncImagePainter
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import presentation.screens.insights.InsightScreen
 import presentation.screens.saved_videos.FavoriteVideoScreen
 import presentation.views.Destination
 import utils.Platform
 import utils.navigation.NavigationStack
 
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
-fun ProfileScreen(platform: Platform, navigationStack: NavigationStack<Destination>, modifier: Modifier = Modifier) {
+fun ProfileScreen(
+    platform: Platform,
+    navigationStack: NavigationStack<Destination>,
+    modifier: Modifier = Modifier
+) {
     //var userProfile by remember { mutableStateOf(userProfile) }
     val viewModel = platform.profileViewModel
     val state = viewModel.state.collectAsState()
-    val scope = rememberCoroutineScope()
-    val context = LocalPlatformContext.current
-
 
     Column(
         modifier = modifier.background(Color.White).fillMaxSize()
@@ -96,21 +102,58 @@ fun ProfileScreen(platform: Platform, navigationStack: NavigationStack<Destinati
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+        val dialogState = remember { mutableStateOf(false) }
+        Row(Modifier.fillMaxWidth()) {
 
-        // Location Button
-        Button(
-            onClick = {
-                navigationStack.push(Destination.DojoLocator)
-            }, modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .fillMaxWidth().height(50.dp)
-        ) {
-            Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Find a dojo near me")
+            Button(
+                onClick = {
+                    dialogState.value = true
+                }, modifier = Modifier
+                    .padding(start = 16.dp, end = 8.dp)
+                    .weight(1f)
+                    .height(50.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("App Insights", textAlign = TextAlign.Center)
+            }
+            Button(
+                onClick = {
+                    navigationStack.push(Destination.DojoLocator)
+                }, modifier = Modifier
+                    .padding(start = 8.dp, end = 16.dp)
+                    .weight(1f)
+                    .height(50.dp)
+            ) {
+                Icon(imageVector = Icons.Default.LocationOn, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Find a Gym", textAlign = TextAlign.Center)
+            }
         }
 
+
+
         Spacer(Modifier.height(16.dp))
+        Divider(Modifier.fillMaxWidth().background(Color.LightGray).height(2.dp))
+
+        Spacer(Modifier.height(16.dp))
+
+
+        AnimatedVisibility(visible = dialogState.value) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Dialog(onDismissRequest = {
+
+                }) {
+                    InsightScreen(platform, onLimitUsageClicked = {
+                       // todo  - enable app limit notifications
+                    }, onSetReminderClicked = {
+                       // todo
+                    }){
+                        dialogState.value = false
+                    }
+                }
+            }
+        }
 
         Box(Modifier.fillMaxSize().background(Color.Transparent)) {
             TabRow(selectedTabIndex = 0, backgroundColor = Color.Transparent) {

@@ -38,13 +38,13 @@ fun MainTopBar(navigationStack: NavigationStack<Destination>) {
     val backAction = {
         if (hasBackIcon) {
             val destination = when (navigationStack.lastWithIndex().value) {
-                Destination.VideoPlayer -> Destination.VideoResults
-                Destination.DojoLocator -> Destination.Profile
+                Destination.VideoPlayer -> listOf(Destination.VideoResults, Destination.Home)
+                Destination.DojoLocator -> listOf(Destination.Profile)
                 else -> null
             }
             destination?.let {
                 navigationStack.backUntil(
-                    destination
+                    *destination.toTypedArray()
                 )
             } ?: navigationStack.back()
 
