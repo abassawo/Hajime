@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -79,7 +80,7 @@ fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
         App(platform)
     } else {
         Box(Modifier.fillMaxSize().background(Color.LightGray)) {
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                 // Name Field
                 OutlinedTextField(
                     value = viewModel.firstName.value,
@@ -96,7 +97,7 @@ fun EnterNameAndRankScreen(platform: Platform, action: () -> Unit) {
 
                 LazyVerticalStaggeredGrid(
                     columns = StaggeredGridCells.Fixed(2),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
                 ) {
                     items(BeltLevel.entries) {
                         Text(text = it.name, modifier = Modifier.clickable {
