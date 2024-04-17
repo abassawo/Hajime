@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -5,9 +6,19 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("kotlinx-serialization")
-//    id("com.google.firebase.appdistribution").apply(false)
+    id("com.codingfeline.buildkonfig")
 }
 
+buildkonfig {
+    packageName = "com.lindenlabs.hajime"
+
+    // default config is required
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "VIMEO_API_KEY", "\"" + System.getenv("VIMEO_API_TOKEN") + "\"")
+        buildConfigField(FieldSpec.Type.STRING, "MAPS_API_KEY", "\"" + System.getenv("MAPS_API_KEY") + "\"")
+    }
+
+}
 kotlin {
     androidTarget {
         compilations.all {
