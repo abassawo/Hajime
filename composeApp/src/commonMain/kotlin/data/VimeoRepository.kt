@@ -1,5 +1,6 @@
 package data
 
+import com.lindenlabs.hajime.BuildKonfig
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.auth.Auth
@@ -72,6 +73,6 @@ class VimeoRepository : VimeoService {
 
 
     companion object {
-        const val token = "bearer 8f7b583cee012448ff7b6eb9485a667c"
+        val token = BuildKonfig.VIMEO_API_TOKEN
     }
 }

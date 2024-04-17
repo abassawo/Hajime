@@ -1,24 +1,45 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import com.codingfeline.buildkonfig.gradle.BuildKonfigExtension
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     id("kotlinx-serialization")
-    id("com.codingfeline.buildkonfig")
+    id("com.codingfeline.buildkonfig") version "0.15.1"
 }
 
-buildkonfig {
+configure<BuildKonfigExtension> {
     packageName = "com.lindenlabs.hajime"
+
+    val props = Properties()
+
+    try {
+        props.load(file("keys.properties").inputStream())
+    } catch (e: Exception) {
+        // keys are private and can not be comitted to git
+    }
 
     // default config is required
     defaultConfigs {
-        buildConfigField(FieldSpec.Type.STRING, "VIMEO_API_KEY", "\"" + System.getenv("VIMEO_API_TOKEN") + "\"")
-        buildConfigField(FieldSpec.Type.STRING, "MAPS_API_KEY", "\"" + System.getenv("MAPS_API_KEY") + "\"")
-    }
+        val apiKey: String = props["VIMEO_API_TOKEN"] as? String ?: ""
+        val mapsKey: String = props["MAPS_API_KEY"] as? String ?: ""
 
+        require(apiKey.isNotEmpty()) {
+            "Register your api key from developer and place it in keys.properties as `VIMEO_API_TOKEN`"
+        }
+
+        require(mapsKey.isNotEmpty()) {
+            "Register your maps key from developer and place it in keys.properties as `MAPS_API_KEY`"
+        }
+
+        buildConfigField(FieldSpec.Type.STRING, "VIMEO_API_TOKEN", apiKey)
+        buildConfigField(FieldSpec.Type.STRING, "MAPS_API_KEY", mapsKey)
+    }
 }
+
 kotlin {
     androidTarget {
         compilations.all {

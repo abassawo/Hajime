@@ -13,7 +13,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value=""/>
+            android:value="AIzaSyA8_7UU5ENQrAPlcPjnxp0IRuprhX5xEkQ"/>
         <!--        Change this value to ${MAPS_API_KEY} after updating local.properties-->
 
 
