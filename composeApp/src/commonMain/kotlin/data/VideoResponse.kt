@@ -22,7 +22,6 @@ data class Video(
     val pictures: Pictures,
     val privacy: Privacy?,
     val content_rating: List<String>,
-//    val embed: String,
     @SerialName("player_embed_url") val playerEmbedUrl: String
 ) {
     var streamUrl: String? = null

@@ -68,7 +68,6 @@ fun HomeScreen(platform: Platform, navigationStack: NavigationStack<Destination>
             }
         }
         item {
-//            Spacer(Modifier.height(16.dp))
             Text("Review all levels", Modifier.padding(16.dp))
         }
         items(curriculum.entries.toList()) { entry ->

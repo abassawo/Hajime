@@ -9,7 +9,7 @@ data class VideoStreamResponse(val request: Request?)
 data class Request(val files: Files)
 
 @Serializable
-data class Files(val progressive: List<Progressive>)
+data class Files(val progressive: List<Progressive>?)
 
 @Serializable
 data class Progressive(val id: String, val profile: String, val url: String)
